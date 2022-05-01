@@ -1,0 +1,14 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    ViewData["Title"] = "Funcan";
+}
+
+<div>
+    <form method="get" asp-controller="FunctionInput" asp-action="GetFunction" class="input-form">
+        <input type="text" name="input" placeholder="Enter a math function ..." 
+               class="input-field input-elem input-elem-trebuchet" autocomplete="off" />
+        <input type="submit" name="submit" value="&#61" class="input-button input-elem input-elem-trebuchet" />
+    </form>
+</div>

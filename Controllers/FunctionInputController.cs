@@ -13,9 +13,9 @@ namespace Funcan.Controllers
     public class FunctionInputController
     {
         private          Dictionary<Regex, string>          _dictionary;
-        private readonly ILogger<WeatherForecastController> _logger;
+        private readonly ILogger<FunctionInputController>   _logger;
 
-        public FunctionInputController(ILogger<WeatherForecastController> logger)
+        public FunctionInputController(ILogger<FunctionInputController> logger)
         {
             _logger     = logger;
             _dictionary = new Dictionary<Regex, string>();
