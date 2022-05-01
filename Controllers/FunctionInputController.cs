@@ -12,8 +12,8 @@ namespace Funcan.Controllers
     [Route("[controller]")]
     public class FunctionInputController
     {
-        private          Dictionary<Regex, string>          _dictionary;
-        private readonly ILogger<FunctionInputController>   _logger;
+        private          Dictionary<Regex, string>        _dictionary;
+        private readonly ILogger<FunctionInputController> _logger;
 
         public FunctionInputController(ILogger<FunctionInputController> logger)
         {
@@ -24,21 +24,29 @@ namespace Funcan.Controllers
         [HttpGet]
         public string GetFunction(string input)
         {
-            var expression         = new NCalc.Expression(input);
+            var validatedFunction  = ValidateInputFunction(input);
+            var expression         = new NCalc.Expression(validatedFunction);
             var functionExpression = CreateExpression(expression);
             var f                  = functionExpression.Compile();
-            return f(2).ToString(CultureInfo.InvariantCulture);
+            return validatedFunction;
         }
 
-        private static Expression<Func<double, double>> CreateExpression(NCalc.Expression expression)
+        private static string ValidateInputFunction(string input)
         {
-            Func<double, double> function = x =>
+            var regex = new Regex(@"(\((?>\((?<c>)|[^()]+|\)(?<-c>))*(?(c)(?!))\)|\w)\^(\((?>\((?<c>)|[^()]+|\)(?<-c>))*(?(c)(?!))\)|\w)");
+            return regex.Replace(input, match => $"Pow({match.Groups[1]},{match.Groups[2]})");
+        }
+
+        private static Expression<Func<double, double, double>> CreateExpression(NCalc.Expression expression)
+        {
+            Func<double, double, double> function = (x, y) =>
             {
                 expression.Parameters["x"] = x;
+                expression.Parameters["y"] = y;
                 return double.Parse(expression.Evaluate().ToString() ?? throw new InvalidOperationException());
             };
 
-            return x => function(x);
+            return (x, y) => function(x, y);
         }
     }
 }
