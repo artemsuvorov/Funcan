@@ -28,6 +28,8 @@ namespace Funcan.Controllers
             var expression         = new NCalc.Expression(validatedFunction);
             var functionExpression = CreateExpression(expression);
             var f                  = functionExpression.Compile();
+            var printer = new FunctionPainter(f);
+            printer.Paint();
             return validatedFunction;
         }
 
