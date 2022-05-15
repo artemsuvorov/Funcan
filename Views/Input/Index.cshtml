@@ -1,14 +1,23 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
+﻿@{
     ViewData["Title"] = "Funcan";
 }
 
-<div>
-    <form method="get" asp-controller="Function" asp-action="Index" class="input-form">
-        <input type="text" name="input" placeholder="Enter a math function ..." 
-               class="input-field input-elem input-elem-trebuchet" autocomplete="off" />
-        <input type="submit" name="submit" value="&#61" class="input-button input-elem input-elem-trebuchet" />
+@section HeadScripts
+{
+    <script src="~/script/plotly-2.12.1.min.js"></script>
+}
+
+@section BodyScripts
+{
+    <script src="~/script/input-func-draw.js"></script>
+}
+
+<div class="center">
+    <form method="get" asp-controller="Function" asp-action="Index" class="input-form"
+        onsubmit="return submitInputFunc(event)">
+        <input type="text" name="input" placeholder="Enter a math function ..." value="Pow(x,2)"
+            class="input-field input-elem input-elem-trebuchet" autocomplete="off" required />
+        <input type="submit" value="&#61" class="input-button input-elem input-elem-trebuchet"/>
     </form>
+    <div id="chart-container"></div>
 </div>
