@@ -1,4 +1,3 @@
-﻿namespace Funcan.Controllers
-{
-    public record struct Point(double X, double Y);
-}
+﻿namespace Funcan.Controllers;
+
+public record struct Point(double X, double Y);

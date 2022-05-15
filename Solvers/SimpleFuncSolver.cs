@@ -11,7 +11,7 @@ namespace Funcan.Solvers
         public PointSet Solve(Func<double, double> function)
         {
             var points = new PointSet(new Style(Color.Blue, Style.DisplayingType.Line));
-            for (double x = -10; x <= 10; x += 0.5f)
+            for (var x = -10d; x <= 10d; x += 0.2d)
             {
                 var y = function(x);
                 points.Add(new Point(x, y));

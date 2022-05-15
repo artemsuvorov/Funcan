@@ -1,32 +1,51 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Funcan.Domain;
 using Funcan.Solvers;
+using NCalc;
 using Newtonsoft.Json;
+using JsonSerializer = System.Text.Json.JsonSerializer;
 
-namespace Funcan.Services
+namespace Funcan.Services;
+
+public class FunctionService
 {
-    public class FunctionService
+    private IEnumerable<IFuncSolver> Solvers { get; }
+
+    public FunctionService(IEnumerable<IFuncSolver> solvers) => Solvers = solvers;
+
+    public string ResolveInput(string input)
     {
-        private IEnumerable<IFuncSolver> Solvers { get; }
+        var expression = new Expression(input);
+        var function = CreateFunction(expression);
+        if (!CheckValidation(function)) return JsonConvert.SerializeObject(new ErrorMessage());
+        var pointSets = Solvers.Select(solver => solver.Solve(function));
+        return JsonConvert.SerializeObject(pointSets);
+    }
 
-        public FunctionService(IEnumerable<IFuncSolver> solvers) => Solvers = solvers;
-
-        public string ResolveInput(string input)
+    private static bool CheckValidation(Func<double, double> function)
+    {
+        try
         {
-            var expression = new NCalc.Expression(input);
-            var function = CreateFunction(expression);
-            var pointSets = Solvers.Select(solver => solver.Solve(function));
-            return JsonConvert.SerializeObject(pointSets);
+            function(0);
+            return true;
         }
-
-        private static Func<double, double> CreateFunction(NCalc.Expression expression)
+        catch (Exception)
         {
-            return x =>
-            {
-                expression.Parameters["x"] = x;
-                return double.Parse(expression.Evaluate().ToString() ?? throw new InvalidOperationException());
-            };
+            return false;
         }
+    }
+
+    private static Func<double, double> CreateFunction(Expression expression)
+    {
+        expression.Parameters["e"] = Math.E;
+        expression.Parameters["pi"] = Math.PI;
+
+        return x =>
+        {
+            expression.Parameters["x"] = x;
+            return double.Parse(expression.Evaluate().ToString() ?? throw new ArgumentException());
+        };
     }
 }
