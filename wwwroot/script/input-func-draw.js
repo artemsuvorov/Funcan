@@ -17,7 +17,7 @@ var layout = {
 function assembleChartData(points) {
     var chartData = {
         x: [],
-        y: []
+        y: [],
     };
 
     for (var point of points) {
@@ -28,10 +28,27 @@ function assembleChartData(points) {
     return [ chartData ];
 }
 
-function drawFunc(data) {
-    var points = data[0].Points;
+function parseChartMode(type) {
+    switch (type.toLowerCase()) {
+        case "line": return "lines";
+        default: return "markers";
+    }
+}
+
+function assembleStyleData(styles) {
+    return {
+        "mode": parseChartMode(styles.Type.Value),
+        "line.color": styles.Color,
+        "line.width": 3,
+    };
+}
+
+function drawFunc(points, styles) {
     var chartData = assembleChartData(points);
     Plotly.newPlot(chartContainer, chartData, layout);
+
+    var update = assembleStyleData(styles);
+    Plotly.restyle(chartContainer, update);
 }
 
 function submitInputFunc(event) {
@@ -39,7 +56,6 @@ function submitInputFunc(event) {
 
     var inputFunc = event.target.elements.input.value;
     var params = { input: inputFunc };
-
     var target = event.target.action + "?" + new URLSearchParams(params);
     fetch(target)
         .then(
@@ -47,7 +63,7 @@ function submitInputFunc(event) {
             (error) => console.error(error)
         )
         .then(
-            (data) => drawFunc(data)
+            (data) => drawFunc(data[0].Points, data[0].Style)
         );
 
     return false;
