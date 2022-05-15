@@ -2,10 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using Plotly.NET;
 using Expression = NCalc.Expression;
 
@@ -30,13 +32,14 @@ namespace Funcan.Controllers
             var validatedFunction  = ValidateInputFunction(input);
             var expression         = new NCalc.Expression(validatedFunction);
             var functionExpression = CreateExpression(expression);
-            Draw(functionExpression);
+            // Draw(functionExpression);
+            var points = MakePoints(functionExpression.Compile());
 
             Console.WriteLine(validatedFunction);
             return new ContentResult
             {
                 ContentType = "text/html",
-                Content     = File.ReadAllText(@"Functions/function.html")
+                Content     = points.GetJsonBody()
             };
         }
 
@@ -57,22 +60,22 @@ namespace Funcan.Controllers
             return x => function(x);
         }
 
-        private static void Draw(Expression<Func<double, double>> expression)
-        {
-            var points = MakePoints(expression.Compile());
-            var chart  = Chart2D.Chart.Spline<double, double, string>(points);
-            chart.WithXAxisStyle(Title.init("xAxis"), ShowGrid: false, ShowLine: true)
-                .WithYAxisStyle(Title.init("yAxis"), ShowGrid: false, ShowLine: true)
-                .SaveHtml(@"Functions/function");
-        }
+        // private static void Draw(Expression<Func<double, double>> expression)
+        // {
+        //     var points = MakePoints(expression.Compile());
+        //     var chart  = Chart2D.Chart.Spline<double, double, string>(points);
+        //     chart.WithXAxisStyle(Title.init("xAxis"), ShowGrid: false, ShowLine: true)
+        //         .WithYAxisStyle(Title.init("yAxis"), ShowGrid: false, ShowLine: true)
+        //         .SaveHtml(@"Functions/function");
+        // }
 
-        private static IEnumerable<Tuple<double, double>> MakePoints(Func<double, double> function)
+        private static PointSet MakePoints(Func<double, double> function)
         {
-            var points = new List<Tuple<double, double>>();
-            for (double x = -100; x <= 100; x += 0.001f)
+            var points = new PointSet(new List<Point>());
+            for (double x = -100; x <= 100; x += 1f)
             {
                 var y = function(x);
-                points.Add(Tuple.Create(x, y));
+                points.AddPoint(new Point(x, y));
             }
 
             return points;
