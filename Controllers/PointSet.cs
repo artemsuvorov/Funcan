@@ -14,14 +14,8 @@ namespace Funcan.Controllers
             Color = color;
         }
 
-        public void AddPoint(Point point)
-        {
-            Points.Add(point);
-        }
+        public void AddPoint(Point point) => Points.Add(point);
 
-        public string GetJsonBody()
-        {
-            return JsonConvert.SerializeObject(this);
-        }
+        public string GetJsonBody() => JsonConvert.SerializeObject(this);
     }
 }

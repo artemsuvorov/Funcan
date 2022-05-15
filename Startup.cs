@@ -1,3 +1,5 @@
+using Funcan.Services;
+using Funcan.Solvers;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -20,10 +22,9 @@ namespace Funcan
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
-            services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Funcan", Version = "v1" });
-            });
+            services.AddScoped<FunctionService>();
+            services.AddScoped<IFuncSolver, SimpleFuncSolver>();
+            services.AddSwaggerGen(c => c.SwaggerDoc("v1", new OpenApiInfo { Title = "Funcan", Version = "v1" }));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -45,6 +46,8 @@ namespace Funcan
 
             app.UseEndpoints(endpoints =>
             {
+                // endpoints.MapControllerRoute(name: "function", pattern: "{controller=FunctionInput}/{action=Index}");
+                // endpoints.MapControllerRoute(name: "function", pattern: "{controller=FunctionInput}/{action=Mock}");
                 endpoints.MapControllers();
             });
         }
