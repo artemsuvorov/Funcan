@@ -6,6 +6,7 @@ namespace Funcan.Controllers
     [Route("[controller]")]
     public class InputController : Controller
     {
+        [HttpGet]
         public IActionResult Index()
         {
             return View();

@@ -18,8 +18,15 @@ public class FunctionController
     }
 
     [HttpGet]
-    public string Index(string input) => functionService.ResolveInput(input);
+    [ProducesResponseType(200, Type = typeof(string))]
+    [Route("")]
+    public string Index([FromQuery] string input)
+    {
+        return functionService.ResolveInput(input);
+    }
 
-    // [HttpGet]
-    // public string Mock() => functionService.ResolveInput("Pow(x, 2)");
+    [HttpGet]
+    [ProducesResponseType(200, Type = typeof(string))]
+    [Route("Mock")]
+    public string Mock() => functionService.ResolveInput("Pow(x, 2)");
 }

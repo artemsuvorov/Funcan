@@ -11,12 +11,9 @@ namespace Funcan
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
-        {
-            Configuration = configuration;
-        }
+        public Startup(IConfiguration configuration) => Configuration = configuration;
 
-        public IConfiguration Configuration { get; }
+        private IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -34,7 +31,7 @@ namespace Funcan
             {
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Funcan v1"));
+                app.UseSwaggerUI(c => c.SwaggerEndpoint("v1/swagger.json", "Funcan v1"));
             }
 
             app.UseHttpsRedirection();
@@ -44,12 +41,7 @@ namespace Funcan
 
             app.UseAuthorization();
 
-            app.UseEndpoints(endpoints =>
-            {
-                // endpoints.MapControllerRoute(name: "function", pattern: "{controller=FunctionInput}/{action=Index}");
-                // endpoints.MapControllerRoute(name: "function", pattern: "{controller=FunctionInput}/{action=Mock}");
-                endpoints.MapControllers();
-            });
+            app.UseEndpoints(endpoints => endpoints.MapControllers());
         }
     }
 }
