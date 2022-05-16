@@ -1,4 +1,5 @@
-﻿var chartContainer = document.getElementById("chart-container");
+﻿var containerHolder = document.getElementById("container-holder");
+var chartContainer = document.getElementById("chart-container");
 
 var layout = {
     title: "Chart",
@@ -43,7 +44,33 @@ function assembleStyleData(styles) {
     };
 }
 
+function hideErrorMessage() {
+    var messageContainer = document.getElementById("message-container");
+    var container = document.createElement("div");
+    container.id = messageContainer.id;
+    messageContainer.replaceWith(container);
+}
+
+function showErrorMessage(error) {
+    hideFunc();
+    var messageContainer = document.getElementById("message-container");
+    var container = document.createElement("div");
+    container.id = messageContainer.id;
+    container.classList.add("container");
+    var message = document.createElement("p");
+    message.classList.add("error-message");
+    message.innerText = "An error occured: " + error;
+    container.appendChild(message);
+    messageContainer.replaceWith(container, " ");
+}
+
+function hideFunc() {
+    chartContainer.innerHTML = "";
+}
+
 function drawFunc(points, styles) {
+    hideErrorMessage();
+
     var chartData = assembleChartData(points);
     Plotly.newPlot(chartContainer, chartData, layout);
 
@@ -63,7 +90,12 @@ function submitInputFunc(event) {
             (error) => console.error(error)
         )
         .then(
-            (data) => drawFunc(data[0].Points, data[0].Style)
+            (data) => {
+                if (data.Error !== undefined)
+                    return showErrorMessage(data.Error);
+                else
+                    return drawFunc(data[0].Points, data[0].Style);
+            }
         );
 
     return false;
