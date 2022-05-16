@@ -5,11 +5,10 @@ using Funcan.Domain;
 using Funcan.Solvers;
 using NCalc;
 using Newtonsoft.Json;
-using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace Funcan.Services;
 
-public class FunctionService
+public class FunctionService : IFunctionService
 {
     private IEnumerable<IFuncSolver> Solvers { get; }
 

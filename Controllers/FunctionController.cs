@@ -9,9 +9,9 @@ namespace Funcan.Controllers;
 public class FunctionController
 {
     private readonly ILogger<FunctionController> logger;
-    private readonly FunctionService functionService;
+    private readonly IFunctionService functionService;
 
-    public FunctionController(ILogger<FunctionController> logger, FunctionService functionService)
+    public FunctionController(ILogger<FunctionController> logger, IFunctionService functionService)
     {
         this.logger = logger;
         this.functionService = functionService;
@@ -20,10 +20,7 @@ public class FunctionController
     [HttpGet]
     [ProducesResponseType(200, Type = typeof(string))]
     [Route("")]
-    public string Index([FromQuery] string input)
-    {
-        return functionService.ResolveInput(input);
-    }
+    public string Index([FromQuery] string input) => functionService.ResolveInput(input);
 
     [HttpGet]
     [ProducesResponseType(200, Type = typeof(string))]

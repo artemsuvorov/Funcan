@@ -19,7 +19,7 @@ namespace Funcan
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
-            services.AddScoped<FunctionService>();
+            services.AddScoped<IFunctionService, FunctionService>();
             services.AddScoped<IFuncSolver, SimpleFuncSolver>();
             services.AddSwaggerGen(c => c.SwaggerDoc("v1", new OpenApiInfo { Title = "Funcan", Version = "v1" }));
         }
