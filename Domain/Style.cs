@@ -1,5 +1,3 @@
-using System.Drawing;
-
 namespace Funcan.Domain
 {
     public class Style

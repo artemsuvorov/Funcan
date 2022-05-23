@@ -1,4 +1,4 @@
-using Funcan.Services;
+using Funcan.Application.Plotters;
 using Funcan.Solvers;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -19,8 +19,8 @@ namespace Funcan
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
-            services.AddScoped<IFunctionService, FunctionService>();
-            services.AddScoped<IFuncSolver, SimpleFuncSolver>();
+            services.AddSingleton<IFunctionParser, FunctionParser>();
+            services.AddSingleton<FunctionPlotter>();
             services.AddSwaggerGen(c => c.SwaggerDoc("v1", new OpenApiInfo { Title = "Funcan", Version = "v1" }));
         }
 

@@ -1,15 +1,14 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-namespace Funcan.Controllers
+namespace Funcan.Controllers;
+
+[ApiController]
+[Route("[controller]")]
+public class InputController : Controller
 {
-    [ApiController]
-    [Route("[controller]")]
-    public class InputController : Controller
+    [HttpGet]
+    public IActionResult Index()
     {
-        [HttpGet]
-        public IActionResult Index()
-        {
-            return View();
-        }
+        return View();
     }
 }
