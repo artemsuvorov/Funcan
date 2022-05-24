@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using Funcan.Application.Plotters;
 using Funcan.Domain;
 using Funcan.Solvers;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Range = Funcan.Domain.Range;
@@ -30,8 +32,10 @@ public class FunctionController
     }
 
     [HttpGet]
+    [Route("")]
     [ProducesResponseType(200, Type = typeof(List<PointSet>))]
-    public ActionResult<List<PointSet>> Index(
+    [ProducesResponseType(400, Type = typeof(string))]
+    public ActionResult<List<PointSet>> GetFunction(
         [FromQuery(Name = "input")] string inputFunction,
         [FromQuery(Name = "from")] double from = -10,
         [FromQuery(Name = "to")] double to = 10
@@ -42,14 +46,45 @@ public class FunctionController
             var function = functionParser.Parse(inputFunction);
             return functionPlotter.GetPointSets(function, new Range(from, to)).ToList();
         }
-        catch (ArgumentException)
+        catch (ArgumentException e)
         {
-            return new BadRequestResult();
+            var result = new ContentResult
+            {
+                Content = e.Message,
+                StatusCode = StatusCodes.Status400BadRequest,
+                ContentType = "string"
+            };
+            return result;
         }
     }
 
     [HttpGet]
-    [ProducesResponseType(200, Type = typeof(List<PointSet>))]
     [Route("break-points")]
-    public ActionResult<List<PointSet>> BreakPoints() => null;
+    [ProducesResponseType(200, Type = typeof(List<PointSet>))]
+    [ProducesResponseType(400, Type = typeof(string))]
+    public ActionResult<List<PointSet>> GetBreakPoints() => null;
+
+    [HttpGet]
+    [Route("extremes")]
+    [ProducesResponseType(200, Type = typeof(List<PointSet>))]
+    [ProducesResponseType(400, Type = typeof(string))]
+    public ActionResult<List<PointSet>> GetExtremes() => null;
+
+    [HttpGet]
+    [Route("asymptotes")]
+    [ProducesResponseType(200, Type = typeof(List<PointSet>))]
+    [ProducesResponseType(400, Type = typeof(string))]
+    public ActionResult<List<PointSet>> GetAsymptotes() => null;
+
+    [HttpGet]
+    [Route("monotone")]
+    [ProducesResponseType(200, Type = typeof(List<PointSet>))]
+    [ProducesResponseType(400, Type = typeof(string))]
+    public ActionResult<List<PointSet>> GetMonotone() => null;
+
+    [HttpGet]
+    [Route("inflection-points")]
+    [ProducesResponseType(200, Type = typeof(List<PointSet>))]
+    [ProducesResponseType(400, Type = typeof(string))]
+    public ActionResult<List<PointSet>> GetInflectionPoints() => null;
 }
