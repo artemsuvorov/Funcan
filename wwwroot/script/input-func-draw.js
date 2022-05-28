@@ -3,7 +3,7 @@ var chartContainer = document.getElementById("chart-container");
 
 var layout = {
     title: "Chart",
-    width: 500,
+    width: 450,
     height: 350,
     xaxis: {
         title: "X Axis",
@@ -22,8 +22,8 @@ function assembleChartData(points) {
     };
 
     for (var point of points) {
-        chartData.x.push(point.X);
-        chartData.y.push(point.Y);
+        chartData.x.push(point.x);
+        chartData.y.push(point.y);
     }
 
     return [ chartData ];
@@ -38,7 +38,7 @@ function parseChartMode(type) {
 
 function assembleStyleData(styles) {
     return {
-        "mode": parseChartMode(styles.Type.Value),
+        "mode": parseChartMode(styles.type.value),
         "line.color": styles.Color,
         "line.width": 3,
     };
@@ -46,22 +46,17 @@ function assembleStyleData(styles) {
 
 function hideErrorMessage() {
     var messageContainer = document.getElementById("message-container");
-    var container = document.createElement("div");
-    container.id = messageContainer.id;
-    messageContainer.replaceWith(container);
+    messageContainer.style.display = "none";
 }
 
 function showErrorMessage(error) {
     hideFunc();
     var messageContainer = document.getElementById("message-container");
-    var container = document.createElement("div");
-    container.id = messageContainer.id;
-    container.classList.add("container");
+    messageContainer.style.display = "block";
     var message = document.createElement("p");
-    message.classList.add("error-message");
+    message.id = "error-message";
     message.innerText = "An error occured: " + error;
-    container.appendChild(message);
-    messageContainer.replaceWith(container, " ");
+    messageContainer.replaceChildren(message);
 }
 
 function hideFunc() {
@@ -82,21 +77,30 @@ function submitInputFunc(event) {
     event.preventDefault();
 
     var inputFunc = event.target.elements.input.value;
-    var params = { input: inputFunc };
+    var from = event.target.elements.from.value;
+    var to = event.target.elements.to.value;
+    var params = { input: inputFunc.trim(), from: from.trim(), to: to.trim() };
     var target = event.target.action + "?" + new URLSearchParams(params);
+
     fetch(target)
         .then(
-            (response) => response.json(),
-            (error) => console.error(error)
+            (response) => {
+                if (!response.ok) 
+                    return response.text().then((text) => { throw text });
+                else
+                    return response.json();
+            }
         )
         .then(
             (data) => {
                 if (data.Error !== undefined)
                     return showErrorMessage(data.Error);
-                else
-                    return drawFunc(data[0].Points, data[0].Style);
+
+                updateHistoryList();
+                return drawFunc(data[0].points, data[0].style);
             }
-        );
+        )
+        .catch((error) => showErrorMessage(error));
 
     return false;
 }
