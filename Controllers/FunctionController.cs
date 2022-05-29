@@ -19,16 +19,29 @@ public class FunctionController
     private readonly IFunctionParser functionParser;
     private readonly ILogger<FunctionController> logger;
     private readonly FunctionPlotter functionPlotter;
+    private readonly ExtremaPlotter extremaPlotter;
+    private readonly InflectionPointsPlotter inflectionPointsPlotter;
+    private readonly DiscontinuitiesPlotter discontinuitiesPlotter;
 
-    public FunctionController(
-        IFunctionParser functionParser,
-        ILogger<FunctionController> logger,
-        FunctionPlotter functionPlotter
-    )
+    // public FunctionController(
+    //     IFunctionParser functionParser,
+    //     ILogger<FunctionController> logger,
+    //     FunctionPlotter functionPlotter,
+    // )
+    // {
+    //     this.functionParser = functionParser;
+    //     this.logger = logger;
+    //     this.functionPlotter = functionPlotter;
+    // }
+
+    public FunctionController(IFunctionParser functionParser, ILogger<FunctionController> logger, FunctionPlotter functionPlotter, ExtremaPlotter extremaPlotter, InflectionPointsPlotter inflectionPointsPlotter, DiscontinuitiesPlotter discontinuitiesPlotter)
     {
         this.functionParser = functionParser;
         this.logger = logger;
         this.functionPlotter = functionPlotter;
+        this.extremaPlotter = extremaPlotter;
+        this.inflectionPointsPlotter = inflectionPointsPlotter;
+        this.discontinuitiesPlotter = discontinuitiesPlotter;
     }
 
     [HttpGet]
@@ -44,7 +57,8 @@ public class FunctionController
         try
         {
             var function = functionParser.Parse(inputFunction);
-            return functionPlotter.GetPointSets(function, new Range(from, to)).ToList();
+            var points = functionPlotter.GetPointSets(function, new Range(from, to));
+            return new Splitter().Split(points, function).ToList();
         }
         catch (ArgumentException e)
         {
@@ -68,7 +82,28 @@ public class FunctionController
     [Route("extremes")]
     [ProducesResponseType(200, Type = typeof(List<PointSet>))]
     [ProducesResponseType(400, Type = typeof(string))]
-    public ActionResult<List<PointSet>> GetExtremes() => null;
+    public ActionResult<List<PointSet>> GetExtremes(
+        [FromQuery(Name = "input")] string inputFunction,
+        [FromQuery(Name = "from")] double from = -10,
+        [FromQuery(Name = "to")] double to = 10
+    )  {
+        try
+        {
+            var function = functionParser.Parse(inputFunction);
+            var points = extremaPlotter.GetPointSets(function, new Range(from, to));
+            return new Splitter().Split(points, function).ToList(); // functionPlotter.Huita();
+        }
+        catch (ArgumentException e)
+        {
+            var result = new ContentResult
+            {
+                Content = e.Message,
+                StatusCode = StatusCodes.Status400BadRequest,
+                ContentType = "string"
+            };
+            return result;
+        }
+    }
 
     [HttpGet]
     [Route("asymptotes")]
