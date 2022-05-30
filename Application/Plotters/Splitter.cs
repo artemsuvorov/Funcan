@@ -9,7 +9,7 @@ public class Splitter
 {
     public IEnumerable<PointSet> Split(PointSet points, Func<double, double> func)
     {
-        var buffer = new PointSet(new Style(new Color("Blue"), Style.DisplayingType.Line));
+        var buffer = new PointSet(points.Style);
         foreach (var point in points.Points)
         {
             var y = DifferentialMath.GetLimit(func, point.X);

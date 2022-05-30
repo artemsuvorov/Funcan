@@ -26,10 +26,10 @@
     </form>
     <div class="analysis-options-container container">
         <label class="container-title">Analysis</label>
-        <form id="analysis-options" onsubmit="return false">
-            <input type="checkbox" name="BreakPoints"/>
+        <form id="analysis-options" onsubmit="return false" method="get" target="Function">
+            <input type="checkbox" name="BreakPoints" />
             <label for="BreakPoints">Break Points</label>
-            <input type="checkbox" name="Extremes" />
+            <input type="checkbox" name="Extremes" action="extremes" />
             <label for="Extremes">Extremes</label>
             <input type="checkbox" name="Asymptotes" />
             <label for="Asymptotes">Asymptotes</label>

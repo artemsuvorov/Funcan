@@ -21,6 +21,9 @@ namespace Funcan
             services.AddControllersWithViews();
             services.AddSingleton<IFunctionParser, FunctionParser>();
             services.AddSingleton<FunctionPlotter>();
+            services.AddSingleton<ExtremaPlotter>();
+            services.AddSingleton<InflectionPointsPlotter>();
+            services.AddSingleton<DiscontinuitiesPlotter>();
             services.AddSwaggerGen(c => c.SwaggerDoc("v1", new OpenApiInfo { Title = "Funcan", Version = "v1" }));
         }
 
