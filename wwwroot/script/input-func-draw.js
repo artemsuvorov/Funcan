@@ -1,4 +1,6 @@
-﻿var containerHolder = document.getElementById("container-holder");
+﻿const LARGE_Y = 100000000;
+
+var containerHolder = document.getElementById("container-holder");
 var chartContainer = document.getElementById("chart-container");
 
 var layout = {
@@ -11,6 +13,7 @@ var layout = {
     },
     yaxis: {
         title: "Y Axis",
+        //scaleanchor: "x",
         showline: false
     },
 };
@@ -28,6 +31,7 @@ function assembleChartData(listOfPoints) {
     for (var points of listOfPoints) {
         chartData.push({ x: [], y: [], name: points.name });
         for (var point of points) {
+            if (Math.abs(point.y) > LARGE_Y) continue;
             chartData[chartData.length-1].x.push(point.x);
             chartData[chartData.length-1].y.push(point.y);
         }
