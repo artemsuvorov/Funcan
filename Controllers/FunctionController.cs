@@ -115,26 +115,18 @@ public class FunctionController
     [Route("asymptotes")]
     [ProducesResponseType(200, Type = typeof(List<PointSet>))]
     [ProducesResponseType(400, Type = typeof(string))]
-    public ActionResult<List<PointSet>> GetAsymptotes() => null;
-
-    [HttpGet]
-    [Route("monotone")]
-    [ProducesResponseType(200, Type = typeof(List<PointSet>))]
-    [ProducesResponseType(400, Type = typeof(string))]
-    public ActionResult<bool> GetMonotone(
-        [FromQuery(Name = "input")] string inputFunction,
+    public ActionResult<List<PointSet>> GetAsymptotes([FromQuery(Name = "input")] string inputFunction,
         [FromQuery(Name = "from")] double from = -10,
-        [FromQuery(Name = "to")] double to = 10
-    )
-    { 
+        [FromQuery(Name = "to")] double to = 10)
+    {
         try
         {
             var function = functionParser.Parse(inputFunction);
-            var points = functionPlotter.GetPointSets(function, new Range(from, to));
-            return points.IsMonotone();
+            var horizontalAsymptotePlotter = new HorizontalAsymptotePlotter();
+            var horizontalAsymptotesPoints = horizontalAsymptotePlotter.GetPointSets(function, new Range(from, to));
+            return new List<PointSet> {horizontalAsymptotesPoints};
         }
         catch
-
             (ArgumentException e)
         {
             var result = new ContentResult
@@ -145,23 +137,49 @@ public class FunctionController
             };
             return result;
         }
-
-        
     }
 
     [HttpGet]
-[Route("inflection-points")]
-[ProducesResponseType(200, Type = typeof(List<PointSet>))]
-[ProducesResponseType(400, Type = typeof(string))]
-public ActionResult<PointSet> GetInflectionPoints(
-    [FromQuery(Name = "input")] string inputFunction,
-    [FromQuery(Name = "from")] double from = -10,
-    [FromQuery(Name = "to")] double to = 10
-)
-{
-    var function = functionParser.Parse(inputFunction);
-    var points = inflectionPointsPlotter.GetPointSets(function, new Range(from, to));
-    return points;
-}
+    [Route("monotone")]
+    [ProducesResponseType(200, Type = typeof(List<PointSet>))]
+    [ProducesResponseType(400, Type = typeof(string))]
+    public ActionResult<bool> GetMonotone(
+        [FromQuery(Name = "input")] string inputFunction,
+        [FromQuery(Name = "from")] double from = -10,
+        [FromQuery(Name = "to")] double to = 10
+    )
+    {
+        try
+        {
+            var function = functionParser.Parse(inputFunction);
+            var points = functionPlotter.GetPointSets(function, new Range(from, to));
+            return points.IsMonotone();
+        }
+        catch
+            (ArgumentException e)
+        {
+            var result = new ContentResult
+            {
+                Content = e.Message,
+                StatusCode = StatusCodes.Status400BadRequest,
+                ContentType = "string"
+            };
+            return result;
+        }
+    }
 
+    [HttpGet]
+    [Route("inflection-points")]
+    [ProducesResponseType(200, Type = typeof(List<PointSet>))]
+    [ProducesResponseType(400, Type = typeof(string))]
+    public ActionResult<PointSet> GetInflectionPoints(
+        [FromQuery(Name = "input")] string inputFunction,
+        [FromQuery(Name = "from")] double from = -10,
+        [FromQuery(Name = "to")] double to = 10
+    )
+    {
+        var function = functionParser.Parse(inputFunction);
+        var points = inflectionPointsPlotter.GetPointSets(function, new Range(from, to));
+        return points;
+    }
 }
