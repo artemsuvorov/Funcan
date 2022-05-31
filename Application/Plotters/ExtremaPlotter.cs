@@ -11,8 +11,8 @@ public class ExtremaPlotter : IPlotter
     public PointSet GetPointSets(Func<double, double> function, Range range)
     {
         var pointSet = new PointSet(new Style(new Color("Cyan"), Style.DisplayingType.Dots));
-        var eps = 0.00001;
-        var step = 0.1;
+        var eps = 0.1;
+        var step = 0.0001;
         var previous = DifferentialMath.GetDerivative(function, range.From - step);
         var current = DifferentialMath.GetDerivative(function, range.From);
         for (var x = range.From; x < range.To; x += step)
@@ -20,7 +20,7 @@ public class ExtremaPlotter : IPlotter
             var next = DifferentialMath.GetDerivative(function, x + step);
             if (Math.Abs(current) < eps && previous * next < 0)
             {
-                pointSet.Add(new Point(x, current));
+                pointSet.Add(new Point(x, function(x)));
             }
 
             previous = current;
