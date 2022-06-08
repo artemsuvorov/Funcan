@@ -75,6 +75,17 @@ body {
     display: inline-block;
 }
 
+.info-message {
+    font-family: 'Trebuchet MS', sans-serif;
+    font-size: 14px;
+    text-align: center;
+    font-weight: bold;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: inline-block;
+}
+
 .analysis-options-container {
     margin-bottom: 8px;
     font-family: 'Trebuchet MS', sans-serif;
@@ -131,8 +142,9 @@ body {
     flex-direction: column;
 }
 
-#message-container {
+#error-container, #info-container {
     margin-bottom: 5px;
+    min-height: 43px;
     display: none;
 }
 

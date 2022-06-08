@@ -27,15 +27,15 @@
     <div class="analysis-options-container container">
         <label class="container-title">Analysis</label>
         <form id="analysis-options" onsubmit="return false" method="get" target="Function">
-            <input type="checkbox" name="BreakPoints" />
+            <input type="checkbox" name="BreakPoints" action="break-points" />
             <label for="BreakPoints">Break Points</label>
             <input type="checkbox" name="Extremes" action="extremes" />
             <label for="Extremes">Extremes</label>
-            <input type="checkbox" name="Asymptotes" />
+            <input type="checkbox" name="Asymptotes" action="asymptotes" />
             <label for="Asymptotes">Asymptotes</label>
-            <input type="checkbox" name="Monotone" />
+            <input type="checkbox" name="Monotone" action="monotone" />
             <label for="Monotone">Monotone</label>
-            <input type="checkbox" name="InflectionPoints" />
+            <input type="checkbox" name="InflectionPoints" action="inflection-points" />
             <label for="InflectionPoints">Inflection Points</label>
         </form>
     </div>
@@ -48,7 +48,8 @@
             </select>
         </div>
         <div id="container-holder">
-            <div id="message-container" class="container error-message"></div>
+            <div id="error-container" class="container error-message"></div>
+            <div id="info-container" class="container info-message"></div>
             <div id="chart-container" class="container"></div>
         </div>
     </div>
