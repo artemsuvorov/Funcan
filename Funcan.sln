@@ -1,9 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.31911.196
+# Visual Studio Version 17
+VisualStudioVersion = 17.2.32505.173
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Funcan", "Funcan.csproj", "{DAD43C21-B16C-4A1D-8203-26EF1B7CAFFF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Funcan", "Funcan.csproj", "{DAD43C21-B16C-4A1D-8203-26EF1B7CAFFF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "..\Tests\Tests.csproj", "{6B2E779D-4459-4638-B35B-E9E9AD3C603D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{DAD43C21-B16C-4A1D-8203-26EF1B7CAFFF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DAD43C21-B16C-4A1D-8203-26EF1B7CAFFF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DAD43C21-B16C-4A1D-8203-26EF1B7CAFFF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6B2E779D-4459-4638-B35B-E9E9AD3C603D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6B2E779D-4459-4638-B35B-E9E9AD3C603D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6B2E779D-4459-4638-B35B-E9E9AD3C603D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6B2E779D-4459-4638-B35B-E9E9AD3C603D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

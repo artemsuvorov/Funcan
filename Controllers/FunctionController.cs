@@ -59,6 +59,9 @@ public class FunctionController
         [FromQuery(Name = "to")] double to = 10
     )
     {
+
+
+
         try
         {
             var function = functionParser.Parse(inputFunction);

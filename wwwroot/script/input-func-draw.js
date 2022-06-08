@@ -2,6 +2,12 @@
 
 var containerHolder = document.getElementById("container-holder");
 var chartContainer = document.getElementById("chart-container");
+Plotly.newPlot(chartContainer, [], layout);
+
+var analysisOptions = document.getElementById("analysis-options"); 
+
+var listOfPoints = [];
+var listOfStyles = [];
 
 var layout = {
     title: "Chart",
@@ -14,9 +20,31 @@ var layout = {
     yaxis: {
         title: "Y Axis",
         //scaleanchor: "x",
+        autorange: false,
         showline: false
     },
 };
+
+function resetLists() {
+    listOfPoints = [];
+    listOfStyles = [];
+}
+
+function appendDataToLists(data, name) {
+    if (Array.isArray(data) && data[0] !== undefined) {
+        data[0].points.name = name;
+        listOfPoints.push(data[0].points);
+        listOfStyles.push(data[0].style);
+    } else if (data.points !== undefined && data.style !== undefined) {
+        data.points.name = name;
+        listOfPoints.push(data.points);
+        listOfStyles.push(data.style);
+    } else if (typeof data === "boolean") {
+        showInfoMessage(name + "? " + data);
+    } else {
+        throw "Uknown data format";
+    }
+}
 
 function getResponseJsonOrError(response) {
     if (!response.ok)
@@ -25,7 +53,7 @@ function getResponseJsonOrError(response) {
         return response.json();
 }
 
-function assembleChartData(listOfPoints) {
+function assembleChartData() {
     var chartData = [];
 
     for (var points of listOfPoints) {
@@ -40,7 +68,7 @@ function assembleChartData(listOfPoints) {
     return chartData;
 }
 
-function parseChartModes(listOfStyles) {
+function parseChartModes() {
     var modes = [];
     for (var style of listOfStyles) {
         switch (style.type.value.toLowerCase()) {
@@ -51,7 +79,7 @@ function parseChartModes(listOfStyles) {
     return modes;
 }
 
-function parseChartColors(listOfStyles) {
+function parseChartColors() {
     var colors = [];
     for (var style of listOfStyles) {
         colors.push(style.color.value);
@@ -59,7 +87,7 @@ function parseChartColors(listOfStyles) {
     return colors;
 }
 
-function assembleStyleData(listOfStyles) {
+function assembleStyleData() {
     return {
         "mode": parseChartModes(listOfStyles),
         "line.color": parseChartColors(listOfStyles),
@@ -68,13 +96,15 @@ function assembleStyleData(listOfStyles) {
 }
 
 function hideErrorMessage() {
-    var messageContainer = document.getElementById("message-container");
+    var messageContainer = document.getElementById("error-container");
     messageContainer.style.display = "none";
 }
 
 function showErrorMessage(error) {
+    console.error(error);
     hideFunc();
-    var messageContainer = document.getElementById("message-container");
+    hideInfoMessage();
+    var messageContainer = document.getElementById("error-container");
     messageContainer.style.display = "block";
     var message = document.createElement("p");
     message.id = "error-message";
@@ -82,49 +112,67 @@ function showErrorMessage(error) {
     messageContainer.replaceChildren(message);
 }
 
-function hideFunc() {
-    chartContainer.innerHTML = "";
+function hideInfoMessage() {
+    var messageContainer = document.getElementById("info-container");
+    messageContainer.style.display = "none";
 }
 
-function drawFunction(points, styles) {
+function showInfoMessage(info) {
+    hideFunc();
     hideErrorMessage();
+    var messageContainer = document.getElementById("info-container");
+    messageContainer.style.display = "block";
+    var message = document.createElement("p");
+    message.id = "info-message";
+    message.innerText = info;
+    messageContainer.replaceChildren(message);
+}
 
-    var chartData = assembleChartData([ points ]);
-    Plotly.newPlot(chartContainer, chartData, layout);
+function hideFunc() {
+    Plotly.react(chartContainer, []);
+}
 
-    var styleData = assembleStyleData([ styles ]);
+function drawFunction() {
+    hideErrorMessage();
+    hideInfoMessage();
+
+    var chartData = assembleChartData();
+    Plotly.react(chartContainer, chartData, layout);
+
+    var styleData = assembleStyleData();
     Plotly.restyle(chartContainer, styleData);
 }
 
-function appendPointsToPlot(funcPoints, newPoints, funcStyles, newStyles) {
-    var chartData = assembleChartData([ funcPoints, newPoints ]);
-    console.log(chartData);
+function appendPointsToPlot() {
+    var chartData = assembleChartData();
     Plotly.react(chartContainer, chartData, styleData);
 
-    var styleData = assembleStyleData([ funcStyles, newStyles ]);
+    var styleData = assembleStyleData();
     Plotly.restyle(chartContainer, styleData);
 }
 
-function drawExtremes(target, params, funcPoints, funcStyles) {
-    var extremes = document.getElementById("analysis-options").elements["Extremes"];
-    if (!extremes.checked) return;
+function fetchAnalysisData(target, params) {
+    for (var analysisOption of analysisOptions) {
+        if (!analysisOption.checked) continue;
 
-    var action = extremes.attributes.action.value;
-    //console.log(target + "/" + action + "?" + params);
-    fetch(target + "/" + action + "?" + params)
-        .then((response) => getResponseJsonOrError(response))
-        .then(
-            (data) => {
-                if (data.Error !== undefined)
-                    return showErrorMessage(data.Error);
+        var action = analysisOption.attributes.action.value;
+        const analysisOptionName = analysisOption.name;
+        fetch(target + "/" + action + "?" + params)
+            .then((response) => getResponseJsonOrError(response))
+            .then(
+                (data) => {
+                    if (data.Error !== undefined)
+                        return showErrorMessage(data.Error);
 
-                data[0].points.name = "Extremes";
-                appendPointsToPlot(funcPoints, data[0].points, funcStyles, data[0].style);
-            }
-        )
-        .catch((error) => showErrorMessage(error));
+                    appendDataToLists(data, analysisOptionName);
+                    appendPointsToPlot();
+                }
+            )
+            .catch((error) => showErrorMessage(error));
 
-    console.log("fetching extreme points ...");
+        console.log("fetching " + analysisOption.name + " ...");
+    }
+    return false;
 }
 
 function submitInputFunc(event) {
@@ -143,9 +191,10 @@ function submitInputFunc(event) {
                     return showErrorMessage(data.Error);
 
                 updateHistoryList();
-                data[0].points.name = inputFunc;
-                drawFunction(data[0].points, data[0].style);
-                drawExtremes(event.target.action, params, data[0].points, data[0].style);
+                resetLists();
+                appendDataToLists(data, inputFunc);
+                drawFunction();
+                fetchAnalysisData(event.target.action, params);
             }
         )
         .catch((error) => showErrorMessage(error));

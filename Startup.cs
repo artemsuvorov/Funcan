@@ -18,6 +18,7 @@ namespace Funcan
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            //Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<string, JObject>>()
             services.AddControllersWithViews();
             services.AddSingleton<IFunctionParser, FunctionParser>();
             services.AddSingleton<FunctionPlotter>();
