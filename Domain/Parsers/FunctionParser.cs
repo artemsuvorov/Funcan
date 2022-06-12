@@ -1,7 +1,7 @@
 using System;
 using NCalc;
 
-namespace Funcan.Solvers;
+namespace Funcan.Domain.Parsers;
 
 public class FunctionParser : IFunctionParser
 {

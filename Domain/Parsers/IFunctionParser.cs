@@ -1,6 +1,6 @@
 using System;
 
-namespace Funcan.Solvers;
+namespace Funcan.Domain.Parsers;
 
 public interface IFunctionParser
 {

@@ -1,5 +1,5 @@
-using Funcan.Application.Plotters;
-using Funcan.Solvers;
+using Funcan.Domain.Parsers;
+using Funcan.Domain.Plotters;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -21,10 +21,12 @@ namespace Funcan
             //Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<string, JObject>>()
             services.AddControllersWithViews();
             services.AddSingleton<IFunctionParser, FunctionParser>();
-            services.AddSingleton<FunctionPlotter>();
-            services.AddSingleton<ExtremaPlotter>();
-            services.AddSingleton<InflectionPointsPlotter>();
             services.AddSingleton<DiscontinuitiesPlotter>();
+            services.AddSingleton<IPlotter, DiscontinuitiesPlotter>();
+            services.AddSingleton<IPlotter, FunctionPlotter>();
+            services.AddSingleton<IPlotter, InflectionPointsPlotter>();
+            services.AddSingleton<IPlotter, ExtremaPlotter>();
+            services.AddSingleton<IPlotter, AsymptotePlotter>();
             services.AddSwaggerGen(c => c.SwaggerDoc("v1", new OpenApiInfo { Title = "Funcan", Version = "v1" }));
         }
 
