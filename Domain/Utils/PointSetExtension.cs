@@ -1,4 +1,5 @@
 ﻿using System;
+using Funcan.Domain.Models;
 
 namespace Funcan.Domain;
 
