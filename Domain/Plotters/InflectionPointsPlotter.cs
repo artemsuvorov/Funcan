@@ -12,11 +12,11 @@ public class InflectionPointsPlotter : IPlotter
     {
         var pointSet = new PointSet();
         var eps = 0.1;
-        var previous = DifferentialMath.GetDerivative(function, functionRange.From - Settings.Step);
-        var current = DifferentialMath.GetDerivative(function, functionRange.From);
+        var previous = ExtendedMath.GetDerivative(function, functionRange.From - Settings.Step);
+        var current = ExtendedMath.GetDerivative(function, functionRange.From);
         for (var x = functionRange.From; x < functionRange.To; x += Settings.Step)
         {
-            var next = DifferentialMath.GetDerivative(function, x + Settings.Step);
+            var next = ExtendedMath.GetDerivative(function, x + Settings.Step);
             if (current == 0)
                 Console.WriteLine(next);
             if (Math.Abs(current) < eps && previous * next > 0)

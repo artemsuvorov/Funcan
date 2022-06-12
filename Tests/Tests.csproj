@@ -8,6 +8,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <PackageReference Include="AngouriMath" Version="1.4.0-preview.3" />
       <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.3.0-preview-20220530-08" />
       <PackageReference Include="NUnit" Version="3.13.3" />
     </ItemGroup>

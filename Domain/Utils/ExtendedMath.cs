@@ -1,8 +1,10 @@
 ﻿using System;
+using Funcan.Domain.Models;
+using Funcan.Domain.Utils;
 
 namespace Funcan.Domain;
 
-public static class DifferentialMath
+public static class ExtendedMath
 {
     public static double GetLeftLimit(Func<double, double> f, double x)
     {
@@ -28,5 +30,20 @@ public static class DifferentialMath
         Func<double, double> newF = xCoordinate => (f(xCoordinate + 0.00001) - f(xCoordinate)) / (0.00001f);
         var limit = GetLimit(newF, x);
         return double.IsInfinity(limit) ? double.NaN : limit;
+    }
+
+    public static MathFunction GetDerivative(MathFunction function)
+    {
+        throw new NotImplementedException();
+    }
+
+    public static MathFunction GetLimit(MathFunction function)
+    {
+        throw new NotImplementedException();
+    }
+
+    public static PointSet SolveEquationInRange(MathFunction function, FunctionRange range)
+    {
+        throw new NotImplementedException();
     }
 }

@@ -13,8 +13,8 @@ public class AsymptotePlotter : IPlotter
         var points = new PointSet();
         for (var x = functionRange.From; x < functionRange.To; x += Settings.Step)
         {
-            var leftLimit = DifferentialMath.GetLeftLimit(function, x);
-            var rightLimit = DifferentialMath.GetRightLimit(function, x);
+            var leftLimit = ExtendedMath.GetLeftLimit(function, x);
+            var rightLimit = ExtendedMath.GetRightLimit(function, x);
             if (double.IsInfinity(leftLimit) && double.IsInfinity(rightLimit))
             {
                 for (var y = functionRange.From; y < functionRange.To; y += 10)

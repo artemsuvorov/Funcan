@@ -13,7 +13,7 @@ public class DiscontinuitiesPlotter : IPlotter
         var breakPoints = new PointSet();
         for (var x = functionRange.From; x <= functionRange.To; x += Settings.Step)
         {
-            var y = DifferentialMath.GetLimit(function, x);
+            var y = ExtendedMath.GetLimit(function, x);
             if (double.IsInfinity(y) || double.IsNaN(y))
             {
                 breakPoints.Add(new Point(x, function(x)));
