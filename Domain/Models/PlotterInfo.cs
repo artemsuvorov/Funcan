@@ -1,3 +1,3 @@
 namespace Funcan.Domain.Models;
 
-public record PlotterInfo(string Name, DrawType DrawType, Color Color);
+public record PlotterInfo(string Name, DrawType DrawType);

@@ -6,7 +6,7 @@ namespace Funcan.Domain.Plotters;
 
 public class DiscontinuitiesPlotter : IPlotter
 {
-    public PlotterInfo PlotterInfo => new PlotterInfo("discontinuities", DrawType.Dots, new Color("red"));
+    public PlotterInfo PlotterInfo => new PlotterInfo("discontinuities", DrawType.Dots);
 
     public IEnumerable<PointSet> GetPointSets(Func<double, double> function, FunctionRange functionRange)
     {

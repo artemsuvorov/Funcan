@@ -6,7 +6,7 @@ namespace Funcan.Domain.Plotters;
 
 public class ExtremaPlotter : IPlotter
 {
-    public PlotterInfo PlotterInfo => new PlotterInfo("extrema", DrawType.Dots, new Color("black"));
+    public PlotterInfo PlotterInfo => new PlotterInfo("extrema", DrawType.Dots);
 
     public IEnumerable<PointSet> GetPointSets(Func<double, double> function, FunctionRange functionRange)
     {
