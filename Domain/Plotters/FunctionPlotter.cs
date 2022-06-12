@@ -13,7 +13,7 @@ public class FunctionPlotter : IPlotter
     public FunctionPlotter(DiscontinuitiesPlotter discontinuitiesPlotter) =>
         DiscontinuitiesPlotter = discontinuitiesPlotter;
 
-    public PlotterInfo PlotterInfo => new("function", DrawType.Line, new Color("blue"));
+    public PlotterInfo PlotterInfo => new("function", DrawType.Line);
 
     public IEnumerable<PointSet> GetPointSets(Func<double, double> function, FunctionRange functionRange)
     {

@@ -4,6 +4,7 @@ using System.Linq;
 using Funcan.Domain.Models;
 using Funcan.Domain.Parsers;
 using Funcan.Domain.Plotters;
+using Funcan.Domain.Utils;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -31,23 +32,28 @@ public class FunctionController
 
 
     [HttpPost]
+    [Route("")]
     [ProducesResponseType(200, Type = typeof(List<Plot>))]
     [ProducesResponseType(400, Type = typeof(string))]
-    public ActionResult<List<Plot>> Index(
+    public ActionResult<List<Plot>> GetFunction(
         [FromQuery(Name = "input")] string inputFunction,
-        [FromBody] IEnumerable<string> plotterNames,
+        [FromBody] IEnumerable<PlotterInfo> analysisOptions,
         [FromQuery(Name = "from")] double from = -10,
         [FromQuery(Name = "to")] double to = 10
     )
     {
-        var necessaryPlotters = plotterNames.ToHashSet();
+        var necessaryPlotters = analysisOptions.Select(option => option.Name).ToHashSet();
         try
         {
             var function = functionParser.Parse(inputFunction);
             var plots = plotters
                 .Where(plotter => necessaryPlotters.Contains(plotter.PlotterInfo.Name))
-                .Select(plotter => new Plot(plotter.GetPointSets(function, new FunctionRange(from, to)),
-                    plotter.PlotterInfo.DrawType, plotter.PlotterInfo.Color)).ToList();
+                .Select(plotter =>
+                    PointsetWrapper.Wrap(
+                        plotter.GetPointSets(function, new FunctionRange(from, to)),
+                        plotter.PlotterInfo
+                    ))
+                .ToList();
             return plots;
         }
         catch (ArgumentException e)
@@ -66,5 +72,6 @@ public class FunctionController
     [Route("Plotters")]
     [ProducesResponseType(200, Type = typeof(List<PlotterInfo>))]
     [ProducesResponseType(400, Type = typeof(string))]
-    public ActionResult<List<PlotterInfo>> PlottersInfo() => plotters.Select(plotter => plotter.PlotterInfo).ToList();
+    public ActionResult<List<PlotterInfo>> GetAnalysisOptions() =>
+        plotters.Select(plotter => plotter.PlotterInfo).ToList();
 }
