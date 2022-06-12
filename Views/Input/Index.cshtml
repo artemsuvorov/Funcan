@@ -9,6 +9,7 @@
 
 @section BodyScripts
 {
+    <script src="~/script/analysis-options-load.js"></script>
     <script src="~/script/input-func-draw.js"></script>
     <script src="~/script/hist-script.js"></script>
 }
@@ -27,7 +28,7 @@
     <div class="analysis-options-container container">
         <label class="container-title">Analysis</label>
         <form id="analysis-options" onsubmit="return false" method="get" target="Function">
-            <input type="checkbox" name="BreakPoints" action="break-points" />
+            @*<input type="checkbox" name="BreakPoints" action="break-points" />
             <label for="BreakPoints">Break Points</label>
             <input type="checkbox" name="Extremes" action="extremes" />
             <label for="Extremes">Extremes</label>
@@ -36,7 +37,7 @@
             <input type="checkbox" name="Monotone" action="monotone" />
             <label for="Monotone">Monotone</label>
             <input type="checkbox" name="InflectionPoints" action="inflection-points" />
-            <label for="InflectionPoints">Inflection Points</label>
+            <label for="InflectionPoints">Inflection Points</label>*@
         </form>
     </div>
     <div id="in-row-container">

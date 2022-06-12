@@ -1,4 +1,4 @@
-﻿const LARGE_Y = 100000000;
+﻿const LARGE_Y = 5000000;
 
 var containerHolder = document.getElementById("container-holder");
 var chartContainer = document.getElementById("chart-container");
@@ -31,16 +31,22 @@ function resetLists() {
 }
 
 function appendDataToLists(data, name) {
-    if (Array.isArray(data) && data[0] !== undefined) {
-        data[0].points.name = name;
-        listOfPoints.push(data[0].points);
-        listOfStyles.push(data[0].style);
-    } else if (data.points !== undefined && data.style !== undefined) {
-        data.points.name = name;
-        listOfPoints.push(data.points);
-        listOfStyles.push(data.style);
-    } else if (typeof data === "boolean") {
-        showInfoMessage(name + "? " + data);
+    if (Array.isArray(data) && data.length > 0) {
+        for (var plot of data) {
+            //console.log(plot);
+            for (var pointSet of plot.pointSet) {
+                pointSet.points.name = plot.plotterInfo.name;
+                listOfPoints.push(pointSet.points);
+            }
+            var style = plotStyles[plot.plotterInfo.name];
+            listOfStyles.push(style);
+        }
+    //} else if (data.points !== undefined && data.style !== undefined) {
+    //    data.points.name = name;
+    //    listOfPoints.push(data.points);
+    //    listOfStyles.push(data.style);
+    //} else if (typeof data === "boolean") {
+    //    showInfoMessage(name + "? " + data);
     } else {
         throw "Uknown data format";
     }
@@ -48,7 +54,7 @@ function appendDataToLists(data, name) {
 
 function getResponseJsonOrError(response) {
     if (!response.ok)
-        return response.text().then((text) => { throw text });
+        return response.text().then(text => { throw new Error(text) });
     else
         return response.json();
 }
@@ -71,8 +77,8 @@ function assembleChartData() {
 function parseChartModes() {
     var modes = [];
     for (var style of listOfStyles) {
-        switch (style.type.value.toLowerCase()) {
-            case "line": modes.push("lines"); break;
+        switch (style.type.toLowerCase()) {
+            case "lines": modes.push("lines"); break;
             case "dots": default: modes.push("markers"); break;
         }
     }
@@ -82,7 +88,7 @@ function parseChartModes() {
 function parseChartColors() {
     var colors = [];
     for (var style of listOfStyles) {
-        colors.push(style.color.value);
+        colors.push(style.color);
     }
     return colors;
 }
@@ -151,28 +157,34 @@ function appendPointsToPlot() {
     Plotly.restyle(chartContainer, styleData);
 }
 
-function fetchAnalysisData(target, params) {
+function fetchAnalysisData(/*target, params*/) {
+    var analysisData = [];
+
     for (var analysisOption of analysisOptions) {
         if (!analysisOption.checked) continue;
 
-        var action = analysisOption.attributes.action.value;
-        const analysisOptionName = analysisOption.name;
-        fetch(target + "/" + action + "?" + params)
-            .then((response) => getResponseJsonOrError(response))
-            .then(
-                (data) => {
-                    if (data.Error !== undefined)
-                        return showErrorMessage(data.Error);
+        //var action = analysisOption.attributes.action.value;
+        //const analysisOptionName = analysisOption.name;
 
-                    appendDataToLists(data, analysisOptionName);
-                    appendPointsToPlot();
-                }
-            )
-            .catch((error) => showErrorMessage(error));
+        analysisData.push(plotters[analysisOption.name])
+
+        //fetch(target + "/" + action + "?" + params)
+        //    .then((response) => getResponseJsonOrError(response))
+        //    .then(
+        //        (data) => {
+        //            if (data.Error !== undefined)
+        //                return showErrorMessage(data.Error);
+
+        //            appendDataToLists(data, analysisOptionName);
+        //            appendPointsToPlot();
+        //        }
+        //    )
+        //    .catch((error) => showErrorMessage(error));
 
         console.log("fetching " + analysisOption.name + " ...");
     }
-    return false;
+
+    return analysisData;
 }
 
 function submitInputFunc(event) {
@@ -183,7 +195,16 @@ function submitInputFunc(event) {
     var to = event.target.elements.to.value;
     var params = new URLSearchParams({ input: inputFunc.trim(), from: from.trim(), to: to.trim() });
 
-    fetch(event.target.action + "?" + params)
+    var analysisData = fetchAnalysisData();
+    //console.log(analysisData);
+    fetch(event.target.action + "?" + params, {
+        method: "POST",
+        headers: {
+            "Accept": "application/json",
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(analysisData)
+    })
         .then((response) => getResponseJsonOrError(response))
         .then(
             (data) => {
@@ -194,7 +215,7 @@ function submitInputFunc(event) {
                 resetLists();
                 appendDataToLists(data, inputFunc);
                 drawFunction();
-                fetchAnalysisData(event.target.action, params);
+                //fetchAnalysisData(event.target.action, params);
             }
         )
         .catch((error) => showErrorMessage(error));

@@ -36,8 +36,10 @@ public class FunctionPlotter : IPlotter
                 points.Add(new Point(x, y));
             }
 
-            if (points.Points.Any()) yield return points;
+            //if (points.Points.Any()) yield return points;
         }
+
+        yield return points;
     }
 
     // public PointSet GetPointSets(Func<double, double> function, FunctionRange functionRange)
