@@ -194,9 +194,8 @@ function submitInputFunc(event) {
     var from = event.target.elements.from.value;
     var to = event.target.elements.to.value;
     var params = new URLSearchParams({ input: inputFunc.trim(), from: from.trim(), to: to.trim() });
-
     var analysisData = fetchAnalysisData();
-    //console.log(analysisData);
+
     fetch(event.target.action + "?" + params, {
         method: "POST",
         headers: {
@@ -211,11 +210,10 @@ function submitInputFunc(event) {
                 if (data.Error !== undefined)
                     return showErrorMessage(data.Error);
 
-                updateHistoryList();
+                updateHistoryList(event);
                 resetLists();
                 appendDataToLists(data, inputFunc);
                 drawFunction();
-                //fetchAnalysisData(event.target.action, params);
             }
         )
         .catch((error) => showErrorMessage(error));

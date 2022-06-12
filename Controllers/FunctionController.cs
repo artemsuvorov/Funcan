@@ -16,7 +16,6 @@ namespace Funcan.Controllers;
 [Route("[controller]")]
 public class FunctionController : Controller
 {
-    private readonly IHistory history;
     private readonly IFunctionParser functionParser;
     private readonly ILogger<FunctionController> logger;
     private readonly IEnumerable<IPlotter> plotters;
@@ -24,10 +23,8 @@ public class FunctionController : Controller
     public FunctionController(
         IFunctionParser functionParser,
         ILogger<FunctionController> logger,
-        IEnumerable<IPlotter> plotters,
-        IHistory history)
+        IEnumerable<IPlotter> plotters)
     {
-        this.history = history;
         this.functionParser = functionParser;
         this.logger = logger;
         this.plotters = plotters;
@@ -47,11 +44,6 @@ public class FunctionController : Controller
     {
         var plotterInfos = analysisOptions.ToList();
         var necessaryPlotters = plotterInfos.Select(option => option.Name).ToHashSet();
-
-        var userId = HttpContext.Request.Cookies["user_id"];
-        if (userId is not null && int.TryParse(userId, out var id))
-            history.Save(id, new HistoryEntry(inputFunction, from, to, plotterInfos.ToList()));
-
         try
         {
             var function = functionParser.Parse(inputFunction);
@@ -83,17 +75,4 @@ public class FunctionController : Controller
     [ProducesResponseType(400, Type = typeof(string))]
     public ActionResult<List<PlotterInfo>> GetAnalysisOptions() =>
         plotters.Select(plotter => plotter.PlotterInfo).ToList();
-
-    [HttpGet]
-    [Route("History")]
-    [ProducesResponseType(200, Type = typeof(List<HistoryEntry>))]
-    [ProducesResponseType(400, Type = typeof(string))]
-    public ActionResult<List<HistoryEntry>> GetHistory()
-    {
-        var userId = HttpContext.Request.Cookies["user_id"];
-        if (userId is not null && int.TryParse(userId, out var id))
-            return history.Get(id);
-    
-        return null;
-    }
 }

@@ -1,6 +1,7 @@
 using Funcan.Domain.Parsers;
 using Funcan.Domain.Plotters;
 using Funcan.Domain.Repository;
+using Funcan.Domain.Session;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -28,6 +29,7 @@ namespace Funcan
             services.AddSingleton<IPlotter, InflectionPointsPlotter>();
             services.AddSingleton<IPlotter, ExtremaPlotter>();
             services.AddSingleton<IPlotter, AsymptotePlotter>();
+            services.AddSingleton<ISessionManager, CookieSessionManager>();
             services.AddSingleton<IHistory, SimpleHistory>();
             services.AddSwaggerGen(c => c.SwaggerDoc("v1", new OpenApiInfo { Title = "Funcan", Version = "v1" }));
         }

@@ -1,19 +1,20 @@
 using System.Collections.Generic;
+using System.Linq;
 using Funcan.Domain.Models;
 
 namespace Funcan.Domain.Repository;
 
 public class SimpleHistory : IHistory
 {
-    private Dictionary<int, List<HistoryEntry>> HistoryEntries { get; } = new();
+    private Dictionary<int, Dictionary<string, HistoryEntry>> HistoryEntries { get; } = new();
 
     public void Save(int userId, HistoryEntry historyEntry)
     {
         if (!HistoryEntries.ContainsKey(userId))
-            HistoryEntries.Add(userId, new List<HistoryEntry>());
-        HistoryEntries[userId].Add(historyEntry);
+            HistoryEntries.Add(userId, new Dictionary<string, HistoryEntry>());
+        HistoryEntries[userId][historyEntry.Function] = historyEntry;
     }
 
     public List<HistoryEntry> Get(int userId) =>
-        !HistoryEntries.ContainsKey(userId) ? null : HistoryEntries[userId];
+        !HistoryEntries.ContainsKey(userId) ? new List<HistoryEntry>() : HistoryEntries[userId].Values.ToList();
 }
