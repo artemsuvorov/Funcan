@@ -18,9 +18,13 @@ public class MathFunction
         Function = function;
     }
 
-    private static void Validate(string function)
+    private static void Validate(Entity function)
     {
-        var a = function.Solve("x");
-        
+        var parsed = MathS.Parse(function.Stringize()).Switch(
+            valid => valid,
+            _ => throw new ArgumentException("Некорректное выражение")
+        );
+        var vars = function.Vars.Where(variable => variable != "x").ToList();
+        if (vars.Count > 0) throw new ArgumentException("Некорректное выражение");
     }
 }
