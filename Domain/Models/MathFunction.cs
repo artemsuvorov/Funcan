@@ -14,7 +14,7 @@ public class MathFunction
 
     public MathFunction(string function)
     {
-        Validate(function);
+        //Validate(function);
         Function = function;
     }
 
