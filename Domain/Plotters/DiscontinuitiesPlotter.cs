@@ -17,7 +17,9 @@ public class DiscontinuitiesPlotter : IPlotter
         foreach (var entity in function.Function.Nodes)
         {
             if (entity is Entity.Divf divf)
-                zeros.AddPointSet(ExtendedMath.GetZerosFunctionInRange(new MathFunction(divf.Stringize()), functionRange));
+                zeros.AddPointSet(
+                    ExtendedMath.GetZerosFunctionInRange(new MathFunction(divf.NodeSecondChild.Stringize()),
+                        functionRange));
         }
 
         yield return zeros;

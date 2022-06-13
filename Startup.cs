@@ -25,6 +25,7 @@ namespace Funcan
             services.AddSingleton<DiscontinuitiesPlotter>();
             services.AddSingleton<IPlotter, DiscontinuitiesPlotter>();
             services.AddSingleton<IPlotter, FunctionPlotter>();
+            services.AddSingleton<FunctionPlotter>();
             services.AddSingleton<IPlotter, InflectionPointsPlotter>();
             services.AddSingleton<IPlotter, ExtremaPlotter>();
             services.AddSingleton<IPlotter, AsymptotePlotter>();
