@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using AngouriMath;
+using AngouriMath.Core.Compilation.IntoLinq;
 using AngouriMath.Extensions;
 using Funcan.Domain.Models;
 using Funcan.Domain.Utils;
@@ -50,32 +51,41 @@ public static class ExtendedMath
 
     public static PointSet GetZerosFunctionInRange(MathFunction function, FunctionRange range)
     {
-        PointSet zeros = new PointSet();
-        var compiledFunc = function.Function.Compile("x");
-        var set = function.Function.SolveEquation("x").DirectChildren;
+        var zeros = new PointSet();
+        var compiledFunc = function.Function.Compile<Func<double, double>>(new CompilationProtocol(), typeof(double), new (Type, Entity.Variable)[1]
+        {
+            (typeof (double), "x")
+        });
+        var set = ($"{function.Function} = 0 and x in RR".Solve("x").Evaled.DirectChildren);
         foreach (var entity in set)
         {
-            foreach (var solution in entity.Evaled.DirectChildren)
+            var solution = entity;
+            var param = solution.Vars.FirstOrDefault();
+            if (param is null)
             {
-                var param = solution.Vars.FirstOrDefault();
-                if (param is null)
+                if (solution is Entity.Number.Real number)
                 {
-                    var xParam = double.Parse(solution.Stringize());
-                    var point = new Point(xParam, compiledFunc.Call(xParam).Real);
-                    zeros.Add(point);
-                }
-                else
-                {
-                    var compiledSolution = solution.Compile(param);
-                    for (var i = range.From; i < range.To; i++)
+                    var xParam = (double) number.EDecimal;
+                    if (xParam > range.From && xParam < range.To && compiledFunc(xParam) < 0.01)
                     {
-                        var xComplex = compiledSolution.Call(i);
-                        if (xComplex.Imaginary != 0 && xComplex.Real > range.From && xComplex.Real < range.To)
-                        {
-                            var xParam = xComplex.Real;
-                            var point = new Point(xParam, compiledFunc.Call(xParam).Real);
-                            zeros.Add(point);
-                        }
+                        var point = new Point(xParam, 0);
+                        zeros.Add(point);
+                    }
+                }
+            }
+            else
+            {
+                var compiledSolution = solution.Compile<Func<double, double>>(new CompilationProtocol(), typeof(double), new (Type, Entity.Variable)[1]
+                {
+                    (typeof (double), param)
+                });;
+                for (var i = range.From; i < range.To; i++)
+                {
+                    var xParam = compiledSolution(i);
+                    if (xParam > range.From && xParam < range.To && compiledFunc(xParam) < 0.01)
+                    {
+                        var point = new Point(xParam, 0);
+                        zeros.Add(point);
                     }
                 }
             }
