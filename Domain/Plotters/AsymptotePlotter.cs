@@ -7,6 +7,10 @@ namespace Funcan.Domain.Plotters;
 public class AsymptotePlotter : IPlotter
 {
     public PlotterInfo PlotterInfo => new PlotterInfo("asymptote", DrawType.Line);
+    public IEnumerable<PointSet> GetPointSets(MathFunction function, FunctionRange functionRange)
+    {
+        throw new NotImplementedException();
+    }
 
     public IEnumerable<PointSet> GetPointSets(MathFunction function, FunctionRange functionRange)
     {
