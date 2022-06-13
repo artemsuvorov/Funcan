@@ -55,8 +55,8 @@ public class FunctionController : Controller
 
         try
         {
-            // var function = new MathFunction(inputFunction);
-            var function = functionParser.Parse(inputFunction);
+            var function = new MathFunction(inputFunction);
+            // var function = functionParser.Parse(inputFunction);
             var plots = plotters
                 .Where(plotter => necessaryPlotters.Contains(plotter.PlotterInfo.Name))
                 .Select(plotter =>

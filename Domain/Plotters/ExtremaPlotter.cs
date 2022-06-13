@@ -8,24 +8,36 @@ public class ExtremaPlotter : IPlotter
 {
     public PlotterInfo PlotterInfo => new PlotterInfo("extrema", DrawType.Dots);
 
-    public IEnumerable<PointSet> GetPointSets(Func<double, double> function, FunctionRange functionRange)
+    public IEnumerable<PointSet> GetPointSets(MathFunction function, FunctionRange functionRange)
     {
-        var pointSet = new PointSet();
-        var eps = 0.1;
-        var previous = ExtendedMath.GetDerivative(function, functionRange.From - Settings.Step);
-        var current = ExtendedMath.GetDerivative(function, functionRange.From);
-        for (var x = functionRange.From; x < functionRange.To; x += Settings.Step)
+        var compiledFunc = function.Function.Compile("x");
+        var derivative = function.Function.Differentiate("x");
+        var zeros = ExtendedMath.GetZerosFunctionInRange(new MathFunction(derivative.Stringize()), functionRange);
+        var delta = 0.001;
+        var extremas = new PointSet();
+        foreach (var point in zeros.Points)
         {
-            var next = ExtendedMath.GetDerivative(function, x + Settings.Step);
-            if (Math.Abs(current) < eps && previous * next < 0)
-            {
-                pointSet.Add(new Point(x, function(x)));
-            }
-
-            previous = current;
-            current = next;
+            var n1 = compiledFunc.Call(point.X - delta).Real;
+            var n2 = compiledFunc.Call(point.X + delta).Real;
+            if (n1 * n2 < 0) extremas.Add(point);
         }
-
-        yield return pointSet;
+        yield return extremas;
+        // var pointSet = new PointSet();
+        // var eps = 0.1;
+        // var previous = ExtendedMath.GetDerivative(function, functionRange.From - Settings.Step);
+        // var current = ExtendedMath.GetDerivative(function, functionRange.From);
+        // for (var x = functionRange.From; x < functionRange.To; x += Settings.Step)
+        // {
+        //     var next = ExtendedMath.GetDerivative(function, x + Settings.Step);
+        //     if (Math.Abs(current) < eps && previous * next < 0)
+        //     {
+        //         pointSet.Add(new Point(x, function(x)));
+        //     }
+        //
+        //     previous = current;
+        //     current = next;
+        // }
+        //
+        // yield return pointSet;
     }
 }

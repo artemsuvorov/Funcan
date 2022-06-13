@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using AngouriMath;
 using AngouriMath.Extensions;
 using Funcan.Controllers;
 using Funcan.Domain.Models;
@@ -9,7 +10,7 @@ namespace Funcan.Domain;
 
 public class MathFunction
 {
-    public string Function { get; }
+    public Entity Function { get; }
 
     public MathFunction(string function)
     {

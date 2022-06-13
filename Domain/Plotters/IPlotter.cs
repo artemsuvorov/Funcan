@@ -7,5 +7,5 @@ namespace Funcan.Domain.Plotters;
 public interface IPlotter
 {
     PlotterInfo PlotterInfo { get; }
-    IEnumerable<PointSet> GetPointSets(Func<double, double> function, FunctionRange functionRange);
+    IEnumerable<PointSet> GetPointSets(MathFunction function, FunctionRange functionRange);
 }
