@@ -1,7 +1,7 @@
 ﻿using System;
 using Funcan.Domain.Models;
 
-namespace Funcan.Domain;
+namespace Funcan.Domain.Utils;
 
 public static class PointSetExtension
 {

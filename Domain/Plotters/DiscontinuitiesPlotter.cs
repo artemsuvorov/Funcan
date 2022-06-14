@@ -1,8 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using AngouriMath;
 using Funcan.Domain.Models;
+using Funcan.Domain.Utils;
 
 namespace Funcan.Domain.Plotters;
 
@@ -23,16 +22,5 @@ public class DiscontinuitiesPlotter : IPlotter
         }
 
         yield return zeros;
-        // var breakPoints = new PointSet();
-        // for (var x = functionRange.From; x <= functionRange.To; x += Settings.Step)
-        // {
-        //     var y = ExtendedMath.GetLimit(function, x);
-        //     if (double.IsInfinity(y) || double.IsNaN(y))
-        //     {
-        //         breakPoints.Add(new Point(x, function(x)));
-        //     }
-        // }
-        //
-        // yield return breakPoints;
     }
 }

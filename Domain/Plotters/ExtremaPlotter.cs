@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using AngouriMath;
 using AngouriMath.Core.Compilation.IntoLinq;
 using Funcan.Domain.Models;
+using Funcan.Domain.Utils;
 
 namespace Funcan.Domain.Plotters;
 
@@ -12,15 +13,17 @@ public class ExtremaPlotter : IPlotter
 
     public IEnumerable<PointSet> GetPointSets(MathFunction function, FunctionRange functionRange)
     {
-        var compiledFunc = function.Function.Compile<Func<double, double>>(new CompilationProtocol(), typeof(double), new (Type, Entity.Variable)[1]
-        {
-            (typeof (double), "x")
-        });
+        var compiledFunc = function.Function.Compile<Func<double, double>>(new CompilationProtocol(), typeof(double),
+            new (Type, Entity.Variable)[1]
+            {
+                (typeof(double), "x")
+            });
         var derivative = function.Function.Differentiate("x");
-        var compiledDerivative = derivative.Compile<Func<double, double>>(new CompilationProtocol(), typeof(double), new (Type, Entity.Variable)[1]
-        {
-            (typeof (double), "x")
-        });
+        var compiledDerivative = derivative.Compile<Func<double, double>>(new CompilationProtocol(), typeof(double),
+            new (Type, Entity.Variable)[1]
+            {
+                (typeof(double), "x")
+            });
         var zeros = ExtendedMath.GetZerosFunctionInRange(new MathFunction(derivative.Stringize()), functionRange);
         var delta = 0.01;
         var extremas = new PointSet();
@@ -28,25 +31,9 @@ public class ExtremaPlotter : IPlotter
         {
             var n1 = compiledDerivative(point.X - delta);
             var n2 = compiledDerivative(point.X + delta);
-            if (n1 * n2 < 0) extremas.Add(point with {Y = compiledFunc(point.X)});
+            if (n1 * n2 < 0) extremas.Add(point with { Y = compiledFunc(point.X) });
         }
+
         yield return extremas;
-        // var pointSet = new PointSet();
-        // var eps = 0.1;
-        // var previous = ExtendedMath.GetDerivative(function, functionRange.From - Settings.Step);
-        // var current = ExtendedMath.GetDerivative(function, functionRange.From);
-        // for (var x = functionRange.From; x < functionRange.To; x += Settings.Step)
-        // {
-        //     var next = ExtendedMath.GetDerivative(function, x + Settings.Step);
-        //     if (Math.Abs(current) < eps && previous * next < 0)
-        //     {
-        //         pointSet.Add(new Point(x, function(x)));
-        //     }
-        //
-        //     previous = current;
-        //     current = next;
-        // }
-        //
-        // yield return pointSet;
     }
 }

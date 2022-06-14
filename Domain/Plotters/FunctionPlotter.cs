@@ -23,16 +23,17 @@ public class FunctionPlotter : IPlotter
             .GetPointSets(function, functionRange).First().Points.ToList();
 
         var points = new PointSet();
-        var compiledFunc = function.Function.Compile<Func<double, double>>(new CompilationProtocol(), typeof(double), new (Type, Entity.Variable)[1]
-        {
-            (typeof (double), "x")
-        });
+        var compiledFunc = function.Function.Compile<Func<double, double>>(new CompilationProtocol(), typeof(double),
+            new (Type, Entity.Variable)[1]
+            {
+                (typeof(double), "x")
+            });
 
         for (var x = functionRange.From; x <= functionRange.To; x += Settings.Step)
         {
             var y = compiledFunc(x);
             var point = new Point(x, y);
-            if (discontinuities.Any() && discontinuities.First().X < point.X)//(discontinuities.Contains(point))
+            if (discontinuities.Any() && discontinuities.First().X < point.X) //(discontinuities.Contains(point))
             {
                 yield return points;
                 discontinuities = discontinuities.Skip(1);

@@ -1,11 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using AngouriMath;
-using AngouriMath;
 using AngouriMath.Core.Exceptions;
-using Funcan.Controllers;
-using Funcan.Domain.Models;
 
 namespace Funcan.Domain;
 

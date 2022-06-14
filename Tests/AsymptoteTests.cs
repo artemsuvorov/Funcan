@@ -12,11 +12,12 @@ public class AsymptoteTests
     public void AsymptoteValidTests(
         [Values("1/x")] string function)
     {
-        double ObliqueAsymptote(double _) => 0;
-        var horizontalAsymptote = 0;
-        Func<Point, bool> asymptoteChecker =
-            point => Math.Abs(point.Y - ObliqueAsymptote(point.X)) < 0.001 ||
-                     Math.Abs(point.X - horizontalAsymptote) < 0.001;
+        double ObliqueAsymptote() => 0;
+        const int horizontalAsymptote = 0;
+
+        bool AsymptoteChecker(Point point) => Math.Abs(point.Y - ObliqueAsymptote()) < 0.001 ||
+                                              Math.Abs(point.X - horizontalAsymptote) < 0.001;
+
         var func = new MathFunction(function);
         var discontinuitiesPlotter = new DiscontinuitiesPlotter();
         var asymptotePlotter = new AsymptotePlotter(
@@ -27,7 +28,7 @@ public class AsymptoteTests
         {
             foreach (var point in pointSet.Points)
             {
-                Assert.True(asymptoteChecker(point));
+                Assert.True(AsymptoteChecker(point));
             }
         }
     }

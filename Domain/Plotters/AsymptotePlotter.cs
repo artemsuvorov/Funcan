@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Funcan.Domain.Models;
+using Funcan.Domain.Utils;
 
 namespace Funcan.Domain.Plotters;
 

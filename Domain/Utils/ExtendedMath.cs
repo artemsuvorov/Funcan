@@ -1,14 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using AngouriMath;
 using AngouriMath.Core;
 using AngouriMath.Core.Compilation.IntoLinq;
 using AngouriMath.Extensions;
 using Funcan.Domain.Models;
-using Funcan.Domain.Utils;
 
-namespace Funcan.Domain;
+namespace Funcan.Domain.Utils;
 
 public static class ExtendedMath
 {
@@ -21,7 +20,7 @@ public static class ExtendedMath
     {
         return GetLimit(function, point, ApproachFrom.Right);
     }
-    
+
     public static double GetLeftLimit(MathFunction function, double point)
     {
         return GetLimit(function, point, ApproachFrom.Left);
@@ -31,7 +30,7 @@ public static class ExtendedMath
     public static double GetLimit(MathFunction function, double point, ApproachFrom from = ApproachFrom.BothSides)
     {
         Entity entityPoint = double.IsNegativeInfinity(point) ? "-oo" :
-            double.IsPositiveInfinity(point) ? "+oo" : point.ToString();
+            double.IsPositiveInfinity(point) ? "+oo" : point.ToString(CultureInfo.InvariantCulture);
         var limit = function.Function.Limit("x", entityPoint, from);
         // if (limit is Entity.Divf) limit = "+oo";
         if (limit.IsFinite)
@@ -58,7 +57,7 @@ public static class ExtendedMath
             if (param is null)
             {
                 if (solution is not Entity.Number.Real number) continue;
-                var xParam = (double) number.EDecimal;
+                var xParam = (double)number.EDecimal;
                 if (!(xParam > range.From) || !(xParam < range.To) || !(compiledFunc(xParam) < 0.01)) continue;
                 var point = new Point(xParam, 0);
                 zeros.Add(point);

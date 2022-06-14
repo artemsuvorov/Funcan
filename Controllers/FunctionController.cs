@@ -3,13 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using Funcan.Domain;
 using Funcan.Domain.Models;
-using Funcan.Domain.Parsers;
 using Funcan.Domain.Plotters;
-using Funcan.Domain.Repository;
 using Funcan.Domain.Utils;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 
 namespace Funcan.Controllers;
 
@@ -17,19 +14,10 @@ namespace Funcan.Controllers;
 [Route("[controller]")]
 public class FunctionController : Controller
 {
-    private readonly IFunctionParser functionParser;
-    private readonly ILogger<FunctionController> logger;
     private readonly IEnumerable<IPlotter> plotters;
 
-    public FunctionController(
-        IFunctionParser functionParser,
-        ILogger<FunctionController> logger,
-        IEnumerable<IPlotter> plotters)
-    {
-        this.functionParser = functionParser;
-        this.logger = logger;
+    public FunctionController(IEnumerable<IPlotter> plotters) =>
         this.plotters = plotters;
-    }
 
 
     [HttpPost]
@@ -48,7 +36,6 @@ public class FunctionController : Controller
         try
         {
             var function = new MathFunction(inputFunction);
-            // var function = functionParser.Parse(inputFunction);
             var plots = plotters
                 .Where(plotter => necessaryPlotters.Contains(plotter.PlotterInfo.Name))
                 .Select(plotter =>
@@ -74,7 +61,6 @@ public class FunctionController : Controller
     [HttpGet]
     [Route("Plotters")]
     [ProducesResponseType(200, Type = typeof(List<PlotterInfo>))]
-    [ProducesResponseType(400, Type = typeof(string))]
     public ActionResult<List<PlotterInfo>> GetAnalysisOptions() =>
         plotters.Select(plotter => plotter.PlotterInfo).ToList();
 }
