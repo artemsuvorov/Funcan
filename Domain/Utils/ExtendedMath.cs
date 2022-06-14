@@ -21,7 +21,7 @@ public static class ExtendedMath
     {
         return GetLimit(function, point, ApproachFrom.Right);
     }
-    
+
     public static double GetLeftLimit(MathFunction function, double point)
     {
         return GetLimit(function, point, ApproachFrom.Left);
@@ -30,13 +30,17 @@ public static class ExtendedMath
 
     public static double GetLimit(MathFunction function, double point, ApproachFrom from = ApproachFrom.BothSides)
     {
+        var a = point.ToString();
         Entity entityPoint = double.IsNegativeInfinity(point) ? "-oo" :
-            double.IsPositiveInfinity(point) ? "+oo" : point.ToString();
+            double.IsPositiveInfinity(point) ? "+oo" : point;
         var limit = function.Function.Limit("x", entityPoint, from);
-        // if (limit is Entity.Divf) limit = "+oo";
-        if (limit.IsFinite)
+        if (limit is Entity.Limitf) throw new ArgumentException("Слишком сложно(");
+        if (limit.Stringize() == "NaN") throw new ArgumentException("Слишком сложно(");
+        if (limit is Entity.Divf) limit = "+oo";
+        if (limit.Evaled.Stringize().Length > 10) limit = "+oo";
+        if (limit.Evaled.IsFinite)
         {
-            return double.Parse(limit.Stringize());
+            return double.Parse(limit.Evaled.Stringize());
         }
 
         return limit.Stringize() == "+oo" ? double.PositiveInfinity : double.NegativeInfinity;

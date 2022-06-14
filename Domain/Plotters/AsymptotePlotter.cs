@@ -21,8 +21,20 @@ public class AsymptotePlotter : IPlotter
     public IEnumerable<PointSet> GetPointSets(MathFunction function, FunctionRange functionRange)
     {
         var discontinuities = DiscontinuitiesPlotter.GetPointSets(function, functionRange);
-        yield return GetVerticalAsymptotePoints(discontinuities, function, functionRange);
-        yield return GetObliqueAsymptotesPoints(function, functionRange);
+        var list = new List<PointSet>();
+        PointSet vertical = null;
+        PointSet horizontal = null;
+        try
+        {
+            vertical = GetVerticalAsymptotePoints(discontinuities, function, functionRange);
+            horizontal = GetObliqueAsymptotesPoints(function, functionRange);
+        }
+        catch (ArgumentException)
+        {
+        }
+
+        if (vertical != null) yield return vertical;
+        if (horizontal != null) yield return vertical;
     }
 
     private PointSet GetObliqueAsymptotesPoints(MathFunction function,
