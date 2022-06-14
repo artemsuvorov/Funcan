@@ -14,7 +14,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Funcan.csproj" />
+      <ProjectReference Include="..\Funcan\Funcan.csproj" />
     </ItemGroup>
 
 </Project>

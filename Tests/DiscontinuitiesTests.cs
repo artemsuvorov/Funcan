@@ -1,5 +1,4 @@
-﻿using Funcan.Domain;
-using Funcan.Domain.Models;
+﻿using Funcan.Domain.Models;
 using Funcan.Domain.Plotters;
 using NUnit.Framework;
 
@@ -8,7 +7,7 @@ namespace Tests;
 [TestFixture]
 public class DiscontinuitiesTests
 {
-    private DiscontinuitiesPlotter plotter = new();
+    private readonly DiscontinuitiesPlotter plotter = new();
 
     private void MainTest(MathFunction function, FunctionRange range, params Point[] expectedPoints)
     {

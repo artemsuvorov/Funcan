@@ -48,13 +48,7 @@ public class FunctionController : Controller
         }
         catch (ArgumentException e)
         {
-            var result = new ContentResult
-            {
-                Content = e.Message,
-                StatusCode = StatusCodes.Status400BadRequest,
-                ContentType = "string"
-            };
-            return result;
+            return BadRequest(e);
         }
     }
 

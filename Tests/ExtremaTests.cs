@@ -1,5 +1,4 @@
-﻿using Funcan.Domain;
-using Funcan.Domain.Models;
+﻿using Funcan.Domain.Models;
 using Funcan.Domain.Plotters;
 using NUnit.Framework;
 
