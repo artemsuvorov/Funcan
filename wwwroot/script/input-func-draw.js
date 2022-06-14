@@ -10,15 +10,12 @@ var listOfPoints = [];
 var listOfStyles = [];
 
 var layout = {
-    title: "Chart",
-    width: 450,
-    height: 350,
+    width: 550,
+    height: 500,
     xaxis: {
-        title: "X Axis",
         zeroline: false
     },
     yaxis: {
-        title: "Y Axis",
         //scaleanchor: "x",
         autorange: false,
         showline: false
@@ -31,24 +28,17 @@ function resetLists() {
 }
 
 function appendDataToLists(data, name) {
-    if (Array.isArray(data) && data.length > 0) {
-        for (var plot of data) {
-            //console.log(plot);
-            for (var pointSet of plot.pointSet) {
-                pointSet.points.name = plot.plotterInfo.name;
-                listOfPoints.push(pointSet.points);
-            }
+    if (!Array.isArray(data) || data.length <= 0)
+        throw "Unknown data format";
+
+    for (var plot of data) {
+        //console.log(plot);
+        for (var pointSet of plot.pointSet) {
+            pointSet.points.name = plot.plotterInfo.name;
+            listOfPoints.push(pointSet.points);
             var style = plotStyles[plot.plotterInfo.name];
             listOfStyles.push(style);
         }
-    //} else if (data.points !== undefined && data.style !== undefined) {
-    //    data.points.name = name;
-    //    listOfPoints.push(data.points);
-    //    listOfStyles.push(data.style);
-    //} else if (typeof data === "boolean") {
-    //    showInfoMessage(name + "? " + data);
-    } else {
-        throw "Uknown data format";
     }
 }
 
@@ -157,33 +147,13 @@ function appendPointsToPlot() {
     Plotly.restyle(chartContainer, styleData);
 }
 
-function fetchAnalysisData(/*target, params*/) {
+function fetchAnalysisData() {
     var analysisData = [];
-
     for (var analysisOption of analysisOptions) {
         if (!analysisOption.checked) continue;
-
-        //var action = analysisOption.attributes.action.value;
-        //const analysisOptionName = analysisOption.name;
-
         analysisData.push(plotters[analysisOption.name])
-
-        //fetch(target + "/" + action + "?" + params)
-        //    .then((response) => getResponseJsonOrError(response))
-        //    .then(
-        //        (data) => {
-        //            if (data.Error !== undefined)
-        //                return showErrorMessage(data.Error);
-
-        //            appendDataToLists(data, analysisOptionName);
-        //            appendPointsToPlot();
-        //        }
-        //    )
-        //    .catch((error) => showErrorMessage(error));
-
         console.log("fetching " + analysisOption.name + " ...");
     }
-
     return analysisData;
 }
 
