@@ -1,7 +1,7 @@
-﻿using Funcan.Domain.Session;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using Funcan.Controllers.Session;
 
 namespace Funcan.Controllers;
 
