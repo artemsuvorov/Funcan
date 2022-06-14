@@ -22,19 +22,26 @@ public class AsymptotePlotter : IPlotter
     {
         var discontinuities = DiscontinuitiesPlotter.GetPointSets(function, functionRange);
         var list = new List<PointSet>();
-        PointSet vertical = null;
+        IEnumerable<PointSet> verticals = null;
         PointSet horizontal = null;
         try
         {
-            vertical = GetVerticalAsymptotePoints(discontinuities, function, functionRange);
+            verticals = GetVerticalAsymptotePoints(discontinuities, function, functionRange);
             horizontal = GetObliqueAsymptotesPoints(function, functionRange);
         }
         catch (ArgumentException)
         {
         }
 
-        if (vertical != null) yield return vertical;
-        if (horizontal != null) yield return vertical;
+        if (verticals != null)
+        {
+            foreach (var vertical in verticals)
+            {
+                yield return vertical;
+            }
+        }
+
+        if (horizontal != null) yield return horizontal;
     }
 
     private PointSet GetObliqueAsymptotesPoints(MathFunction function,
@@ -56,12 +63,13 @@ public class AsymptotePlotter : IPlotter
         return FunctionPlotter.GetPointSets(asymptote, range).FirstOrDefault();
     }
 
-    private PointSet GetVerticalAsymptotePoints(IEnumerable<PointSet> discontinuities, MathFunction function,
+    private IEnumerable<PointSet> GetVerticalAsymptotePoints(IEnumerable<PointSet> discontinuities,
+        MathFunction function,
         FunctionRange range)
     {
-        var points = new PointSet();
         foreach (var pointSet in discontinuities)
         {
+            var points = new PointSet();
             foreach (var point in pointSet.Points)
             {
                 var leftLimit = ExtendedMath.GetLeftLimit(function, point.X);
@@ -69,11 +77,11 @@ public class AsymptotePlotter : IPlotter
                 if (!double.IsInfinity(leftLimit) && !double.IsInfinity(rightLimit)) continue;
                 for (var y = range.From; y < range.To; y++)
                 {
-                    points.Add(point with { Y = y });
+                    points.Add(point with {Y = y});
                 }
             }
-        }
 
-        return points;
+            yield return points;
+        }
     }
 }
