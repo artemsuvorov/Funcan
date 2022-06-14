@@ -7,9 +7,10 @@ var funcToField = document.getElementById("to-input-field");
 var funcSubmitButton = document.getElementById("input-submit-button");
 var historyList = document.getElementById("history-list");
 historyList.innerHTML = "";
-loadUserHistory(true);
+loadUserHistory();
 
-function loadUserHistory(redraw) {
+function loadUserHistory() {
+    historyList.innerHTML = ""; 
     fetch(window.location.origin + "/Function/History")
         .then((response) => getResponseJsonOrError(response))
         .then(
@@ -17,11 +18,13 @@ function loadUserHistory(redraw) {
                 if (data.Error !== undefined)
                     return showErrorMessage(data.Error);
 
-                for (var historyEntry of data.reverse()) {
+                var sortedData = Object.entries(data)
+                    .sort(([, value1], [, value2]) => new Date(value1.time) - new Date(value2.time));
+                console.log(sortedData);
+                for (var [index, historyEntry] of sortedData) {
                     var func = historyEntry.function;
                     history[func] = historyEntry;
-                    //removeExistingFuncs(func);
-                    if (redraw) addInputFuncToHistory(func);
+                    addInputFuncToHistory(func);
                 }
             }
         )
@@ -29,46 +32,13 @@ function loadUserHistory(redraw) {
 }
 
 function updateHistoryList(event) {
-    loadUserHistory(false);
-
-    var func = funcInputField.value;
-    removeExistingFuncs(func);
-    addInputFuncToHistory(func);
-
-    //var inputFunc = event.target.elements.input.value;
-    //var from = event.target.elements.from.value;
-    //var to = event.target.elements.to.value;
-
-    //var params = new URLSearchParams({ input: inputFunc.trim(), from: from.trim(), to: to.trim() });
-    //var analysisData = fetchAnalysisData();
-    //history[inputFunc] = { function: inputFunc, from: from, to: to, analysisOptions: analysisData };
-
-    //fetch(window.location.origin + "/History/Add?" + params, {
-    //    method: "PUT",
-    //    headers: {
-    //        "Accept": "application/json",
-    //        "Content-Type": "application/json"
-    //    },
-    //    body: JSON.stringify(analysisData)
-    //})
-    //.catch((error) => showErrorMessage(error));
+    loadUserHistory();
 }
 
 function addInputFuncToHistory(func) {
-    if (func in history) {
-        var funcInput = document.createElement("option");
-        funcInput.innerHTML = func;
-        historyList.insertBefore(funcInput, historyList.firstChild);
-    }
-}
-
-function removeExistingFuncs(func) {
-    for (var option of historyList.options) {
-        if (option.innerHTML.trim() == func.trim())
-            option.remove();
-        else
-            option.selected = undefined;
-    }
+    var funcInput = document.createElement("option");
+    funcInput.innerHTML = func;
+    historyList.insertBefore(funcInput, historyList.firstChild);
 }
 
 function historyDoubleClick(event) {

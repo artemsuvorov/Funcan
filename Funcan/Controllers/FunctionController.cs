@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Funcan.Domain.Models;
@@ -41,7 +42,7 @@ public class FunctionController : Controller
             if (userId is not null && int.TryParse(userId, out var id))
             {
                 HistoryRepository
-                    .Save(id, new HistoryEntry(inputFunction, from, to, plotters));
+                    .Save(id, new HistoryEntry(inputFunction, from, to, plotters, DateTime.Now));
             }
 
             return plots;
