@@ -69,19 +69,19 @@ public class AsymptotePlotter : IPlotter
     {
         foreach (var pointSet in discontinuities)
         {
-            var points = new PointSet();
             foreach (var point in pointSet.Points)
             {
+                var verticalAsymptotePoints = new PointSet();
                 var leftLimit = ExtendedMath.GetLeftLimit(function, point.X);
                 var rightLimit = ExtendedMath.GetRightLimit(function, point.X);
                 if (!double.IsInfinity(leftLimit) && !double.IsInfinity(rightLimit)) continue;
                 for (var y = range.From; y < range.To; y++)
                 {
-                    points.Add(point with {Y = y});
+                    verticalAsymptotePoints.Add(point with {Y = y});
                 }
-            }
 
-            yield return points;
+                yield return verticalAsymptotePoints;
+            }
         }
     }
 }
