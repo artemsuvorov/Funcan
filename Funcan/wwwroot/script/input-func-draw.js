@@ -151,7 +151,7 @@ function fetchAnalysisData() {
     var analysisData = [];
     for (var analysisOption of analysisOptions) {
         if (!analysisOption.checked) continue;
-        analysisData.push(plotters[analysisOption.name])
+        analysisData.push(plotters[analysisOption.name].name)
         console.log("fetching " + analysisOption.name + " ...");
     }
     return analysisData;
