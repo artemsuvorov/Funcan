@@ -1,5 +1,7 @@
 using System.Collections.Generic;
+using System.Linq;
 using Funcan.Domain.Models;
+using Funcan.Domain.Repository;
 using Funcan.Service;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,9 +12,13 @@ namespace Funcan.Controllers;
 public class FunctionController : Controller
 {
     private IPlotterService PlotterService { get; }
+    private IHistoryRepository HistoryRepository { get; }
 
-    public FunctionController(IPlotterService plotterService) =>
+    public FunctionController(IPlotterService plotterService, IHistoryRepository historyRepository)
+    {
         PlotterService = plotterService;
+        HistoryRepository = historyRepository;
+    }
 
     [HttpPost]
     [Route("")]
@@ -29,7 +35,15 @@ public class FunctionController : Controller
         var function = new MathFunction(inputFunction);
         if (true)
         {
-            var plots = PlotterService.GetPlots(function, new FunctionRange(from, to), analysisOptions);
+            var plotterInfos = analysisOptions.ToList();
+            var plots = PlotterService.GetPlots(function, new FunctionRange(from, to), plotterInfos);
+            var userId = HttpContext.Request.Cookies["user_id"];
+            if (userId is not null && int.TryParse(userId, out var id))
+            {
+                HistoryRepository
+                    .Save(id, new HistoryEntry(inputFunction, from, to, plotterInfos.ToList()));
+            }
+
             return plots;
         }
     }
@@ -38,4 +52,15 @@ public class FunctionController : Controller
     [Route("Plotters")]
     [ProducesResponseType(200, Type = typeof(List<PlotterInfo>))]
     public ActionResult<List<PlotterInfo>> GetAnalysisOptions() => PlotterService.GetPlotterInfos();
+
+    [HttpGet]
+    [Route("History")]
+    [ProducesResponseType(200, Type = typeof(List<HistoryEntry>))]
+    public ActionResult<List<HistoryEntry>> GetHistory()
+    {
+        var userId = HttpContext.Request.Cookies["user_id"];
+        if (userId is not null && int.TryParse(userId, out var id))
+            return HistoryRepository.Get(id);
+        return new List<HistoryEntry>();
+    }
 }
