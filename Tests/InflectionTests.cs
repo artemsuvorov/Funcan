@@ -13,7 +13,7 @@ public class InflectionTests
     [Test]
     public void TestCube()
     {
-        var mathFunction = new MathFunction("x^3");
+        MathFunction.TryCreate("x^3", out var mathFunction);
         var range = new FunctionRange(-5, 5);
         var collection = inflectionPointsPlotter.GetPointSets(mathFunction, range).ToList();
         Assert.AreEqual(1, collection.Count);
@@ -24,7 +24,7 @@ public class InflectionTests
 
     public void MainTest(string function, FunctionRange range, params Point[] points)
     {
-        var mathFunction = new MathFunction(function);
+        MathFunction.TryCreate(function, out var mathFunction);
         var collection = inflectionPointsPlotter.GetPointSets(mathFunction, range).ToList();
         Assert.True(collection.Count != 0);
         var resultPoints = collection.First().Points.OrderBy(point => point.X);

@@ -9,63 +9,70 @@ namespace Funcan.Domain.Models;
 
 public class MathFunction
 {
-    public Entity Function { get; }
+    public Entity Entity { get; }
 
-    public MathFunction(string function)
+    private MathFunction(string entity)
     {
-        Validate(function);
-        function = Regex.Replace(function, @"(?<!arc)((tan)\(x\))", "(sin(x)/cos(x))");
-        function = Regex.Replace(function, @"(?<!arc)((cot)\(x\))", "(cos(x)/sin(x))");
-        function.Simplify();
-        Function = function;
+        entity = Regex.Replace(entity, @"(?<!arc)((tan)\(x\))", "(sin(x)/cos(x))");
+        entity = Regex.Replace(entity, @"(?<!arc)((cot)\(x\))", "(cos(x)/sin(x))");
+        entity.Simplify();
+        Entity = entity;
     }
 
-    private static void Validate(string functionStr)
+    public static bool TryCreate(string str, out MathFunction function)
     {
-        var errorMessage = "Некорректное выражение";
+        if (!IsValid(str))
+        {
+            function = null;
+            return false;
+        }
+
+        function = new MathFunction(str);
+        return true;
+    }
+
+    private static bool IsValid(string functionStr)
+    {
+        Entity function;
         try
         {
-            Entity function = functionStr;
-            MathS.Parse(function.Stringize()).Switch(
-                valid => valid,
-                _ => throw new ArgumentException(errorMessage)
-            );
-            var vars = function.Vars.Where(variable => variable != "x").ToList();
-            if (vars.Count > 0) throw new ArgumentException(errorMessage);
+            function = functionStr;
         }
         catch (UnhandledParseException)
         {
-            throw new ArgumentException(errorMessage);
+            return false;
         }
+        var vars = function.Vars.Where(variable => variable != "x").ToList();
+        return vars.Count == 0;
     }
 
     public static MathFunction operator /(MathFunction a, MathFunction b)
     {
-        return new MathFunction($"({a.Function}) / ({b.Function})");
+        return new MathFunction($"({a.Entity}) / ({b.Entity})");
     }
 
     public static MathFunction operator +(MathFunction a, MathFunction b)
     {
-        return new MathFunction($"({a.Function}) + ({b.Function})");
+        return new MathFunction($"({a.Entity}) + ({b.Entity})");
     }
 
     public static MathFunction operator -(MathFunction a, MathFunction b)
     {
-        return new MathFunction($"({a.Function}) - ({b.Function})");
+        return new MathFunction($"({a.Entity}) - ({b.Entity})");
     }
 
     public static MathFunction operator *(MathFunction a, MathFunction b)
     {
-        return new MathFunction($"({a.Function}) * ({b.Function})");
+        return new MathFunction($"({a.Entity}) * ({b.Entity})");
     }
 
     public static MathFunction operator *(double a, MathFunction b)
     {
-        return new MathFunction($"{a} * ({b.Function})");
+        return new MathFunction($"{a} * ({b.Entity})");
     }
 
     public static MathFunction operator +(MathFunction b, double a)
     {
-        return new MathFunction($"({b.Function}) + {a}");
+        return new MathFunction($"({b.Entity}) + {a}");
     }
 }

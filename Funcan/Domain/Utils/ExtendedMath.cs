@@ -13,7 +13,8 @@ public static class ExtendedMath
 {
     public static MathFunction GetDerivative(MathFunction function)
     {
-        return new MathFunction(function.Function.Differentiate("x").Stringize());
+        MathFunction.TryCreate(function.Entity.Differentiate("x").Stringize(), out var derivative);
+        return derivative;
     }
 
     public static double GetRightLimit(MathFunction function, double point)
@@ -31,7 +32,7 @@ public static class ExtendedMath
     {
         Entity entityPoint = double.IsNegativeInfinity(point) ? "-oo" :
             double.IsPositiveInfinity(point) ? "+oo" : point;
-        var limit = function.Function.Limit("x", entityPoint, from);
+        var limit = function.Entity.Limit("x", entityPoint, from);
         if (limit is Entity.Limitf) throw new ArgumentException("Слишком сложно(");
         if (limit.Stringize() == "NaN") throw new ArgumentException("Слишком сложно(");
         if (limit is Entity.Divf) limit = "+oo";
@@ -47,12 +48,12 @@ public static class ExtendedMath
     public static PointSet GetZerosFunctionInRange(MathFunction function, FunctionRange range)
     {
         var zeros = new PointSet();
-        var compiledFunc = function.Function.Compile<Func<double, double>>(new CompilationProtocol(), typeof(double),
+        var compiledFunc = function.Entity.Compile<Func<double, double>>(new CompilationProtocol(), typeof(double),
             new (Type, Entity.Variable)[1]
             {
                 (typeof(double), "x")
             });
-        var set = ($"{function.Function} = 0 and x in RR".Solve("x").Evaled.DirectChildren);
+        var set = ($"{function.Entity} = 0 and x in RR".Solve("x").Evaled.DirectChildren);
         FindSolutionsInCollections(set, zeros, range, compiledFunc);
         return zeros;
     }
@@ -102,17 +103,18 @@ public static class ExtendedMath
     public static PointSet GetCriticalPoints(MathFunction function, FunctionRange functionRange,
         MathFunction derivative)
     {
-        var compiledFunc = function.Function.Compile<Func<double, double>>(
+        var compiledFunc = function.Entity.Compile<Func<double, double>>(
             new CompilationProtocol(), typeof(double), new (Type, Entity.Variable)[1]
             {
                 (typeof(double), "x")
             });
-        var compiledDerivative = derivative.Function.Compile<Func<double, double>>(
+        var compiledDerivative = derivative.Entity.Compile<Func<double, double>>(
             new CompilationProtocol(), typeof(double), new (Type, Entity.Variable)[1]
             {
                 (typeof(double), "x")
             });
-        var zeros = GetZerosFunctionInRange(new MathFunction(derivative.Function.Stringize()), functionRange);
+        MathFunction.TryCreate(derivative.Entity.Stringize(), out var derivativeFunc);
+        var zeros = GetZerosFunctionInRange(derivativeFunc, functionRange);
         var delta = 0.01;
         var criticalPoints = new PointSet();
         foreach (var point in zeros.Points)

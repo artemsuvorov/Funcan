@@ -14,7 +14,7 @@ public class FunctionTests
     [TestCase("cos(x)", new double[] { -1, 1, 0 })]
     public void FunctionPlotterTest(string function, double[] expectedYs)
     {
-        var mathFunction = new MathFunction(function);
+        MathFunction.TryCreate(function, out var mathFunction);
         var range = new FunctionRange(-6, 6);
         var functionPlotter = new FunctionPlotter(new DiscontinuitiesPlotter());
         var ys = functionPlotter
@@ -30,7 +30,7 @@ public class FunctionTests
     [TestCase("1/x", 2, -1, 1)]
     public void FunctionPlotterWithDiscontinuities(string function, int expectedPointSetCount, int from, int to)
     {
-        var mathFunction = new MathFunction(function);
+        MathFunction.TryCreate(function, out var mathFunction);
         var range = new FunctionRange(from, to);
         var functionPlotter = new FunctionPlotter(new DiscontinuitiesPlotter());
         var pointSets = functionPlotter.GetPointSets(mathFunction, range);

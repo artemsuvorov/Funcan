@@ -8,7 +8,7 @@ class FunctionHandler
 {
     public static void CheckValidAsymptote(Func<Point, bool> checker, string function, FunctionRange range)
     {
-        var func = new MathFunction(function);
+        MathFunction.TryCreate(function, out var func);
         var discontinuitiesPlotter = new DiscontinuitiesPlotter();
         var asymptotePlotter = new AsymptotePlotter(
             new FunctionPlotter(discontinuitiesPlotter), discontinuitiesPlotter

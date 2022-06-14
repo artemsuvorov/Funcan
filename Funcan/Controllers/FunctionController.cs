@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using AngouriMath;
 using Funcan.Domain.Models;
 using Funcan.Domain.Repository;
 using Funcan.Domain.Service;
@@ -33,8 +34,7 @@ public class FunctionController : Controller
     )
     {
         // TODO: validate function
-        var function = new MathFunction(inputFunction);
-        if (true)
+        if (MathFunction.TryCreate(inputFunction, out var function))
         {
             var plotters = necessaryPlotters.ToList();
             var plots = PlotterService.GetPlots(function, new FunctionRange(from, to), plotters);
@@ -47,6 +47,13 @@ public class FunctionController : Controller
 
             return plots;
         }
+
+        else
+        {
+            //Error
+        }
+
+        throw new AggregateException();
     }
 
     [HttpGet]

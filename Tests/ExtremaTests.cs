@@ -12,7 +12,8 @@ public class ExtremaTests
     [Test]
     public void TestSqr()
     {
-        var mathFunction = new MathFunction("x^2");
+        
+        MathFunction.TryCreate("x^2", out var mathFunction);
         var range = new FunctionRange(-5, 5);
         var collection = extremaPlotter.GetPointSets(mathFunction, range);
         var pointSets = collection.ToList();
@@ -24,7 +25,7 @@ public class ExtremaTests
 
     private void Polynomial(string expression, int count, params Point[] points)
     {
-        var mathFunction = new MathFunction(expression);
+        MathFunction.TryCreate(expression, out var mathFunction);
         var range = new FunctionRange(-5, 5);
         var collection = extremaPlotter.GetPointSets(mathFunction, range);
         var pointSets = collection.ToList();
@@ -49,7 +50,7 @@ public class ExtremaTests
 
     private void Trigonometry(string function, params Point[] points)
     {
-        var mathFunction = new MathFunction(function);
+        MathFunction.TryCreate(function, out var mathFunction);
         var range = new FunctionRange(-5, 7);
         var collection = extremaPlotter.GetPointSets(mathFunction, range);
         var pointSets = collection.ToList();

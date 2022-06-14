@@ -13,8 +13,9 @@ public class InflectionPointsPlotter : IPlotter
 
     public IEnumerable<PointSet> GetPointSets(MathFunction function, FunctionRange functionRange)
     {
-        var secondDerivative = function.Function.Differentiate("x").Differentiate("x");
+        var secondDerivative = function.Entity.Differentiate("x").Differentiate("x");
+        MathFunction.TryCreate(secondDerivative.Stringize(), out var secondDerivativeFunc);
         yield return ExtendedMath.
-            GetCriticalPoints(function, functionRange, new MathFunction(secondDerivative.Stringize()));
+            GetCriticalPoints(function, functionRange, secondDerivativeFunc);
     }
 }

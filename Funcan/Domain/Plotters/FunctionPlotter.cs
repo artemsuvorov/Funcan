@@ -23,7 +23,7 @@ public class FunctionPlotter : IPlotter
             .GetPointSets(function, functionRange).First().Points.OrderBy(point => point.X);
 
         var points = new PointSet();
-        var compiledFunc = function.Function.Compile<Func<double, double>>(new CompilationProtocol(), typeof(double),
+        var compiledFunc = function.Entity.Compile<Func<double, double>>(new CompilationProtocol(), typeof(double),
             new (Type, Entity.Variable)[1]
             {
                 (typeof(double), "x")

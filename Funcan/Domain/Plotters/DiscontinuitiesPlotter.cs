@@ -12,11 +12,11 @@ public class DiscontinuitiesPlotter : IPlotter
     public IEnumerable<PointSet> GetPointSets(MathFunction function, FunctionRange functionRange)
     {
         var zeros = new PointSet();
-        foreach (var entity in function.Function.Nodes)
+        foreach (var entity in function.Entity.Nodes)
         {
-            if (entity is Entity.Divf divf)
-                zeros.AddPointSet(ExtendedMath.GetZerosFunctionInRange(
-                    new MathFunction(divf.NodeSecondChild.Stringize()), functionRange));
+            if (entity is not Entity.Divf divf) continue;
+            MathFunction.TryCreate(divf.NodeSecondChild.Stringize(), out var denominator);
+            zeros.AddPointSet(ExtendedMath.GetZerosFunctionInRange(denominator, functionRange));
         }
 
         yield return zeros;

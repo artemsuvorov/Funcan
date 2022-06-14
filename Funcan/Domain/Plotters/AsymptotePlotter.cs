@@ -49,7 +49,7 @@ public class AsymptotePlotter : IPlotter
     {
         // y = kx + b
         var points = new PointSet();
-        var defaultLinearFunction = new MathFunction("x");
+        MathFunction.TryCreate("x", out var defaultLinearFunction);
         var kFunction = function / defaultLinearFunction;
         var firstKLimit = ExtendedMath.GetLeftLimit(kFunction, double.PositiveInfinity);
         var secondKLimit = ExtendedMath.GetRightLimit(kFunction, double.NegativeInfinity);

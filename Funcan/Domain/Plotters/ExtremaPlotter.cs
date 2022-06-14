@@ -13,8 +13,9 @@ public class ExtremaPlotter : IPlotter
 
     public IEnumerable<PointSet> GetPointSets(MathFunction function, FunctionRange functionRange)
     {
-        var derivative = function.Function.Differentiate("x");
+        var derivative = function.Entity.Differentiate("x");
+        MathFunction.TryCreate(derivative.Stringize(), out var derivativeFunc);
         yield return ExtendedMath
-            .GetCriticalPoints(function, functionRange, new MathFunction(derivative.Stringize()));
+            .GetCriticalPoints(function, functionRange, derivativeFunc);
     }
 }

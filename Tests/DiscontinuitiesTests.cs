@@ -27,16 +27,19 @@ public class DiscontinuitiesTests
     public void SimpleFunctionTest()
     {
         var range = new FunctionRange(-5, 5);
-        MainTest(new MathFunction("1/x"), range, new Point(0, 0));
+        MathFunction.TryCreate("1/x", out var function);
+        MainTest(function, range, new Point(0, 0));
     }
 
     [Test]
     public void ComplicatedFunctionTest()
     {
         var range = new FunctionRange(-10, 10);
-        MainTest(new MathFunction("1 / (x^2 -4)"), range, new Point(-2, 0), new Point(2, 0));
-        MainTest(new MathFunction("1/ (x^3 - 5x^2 + 6x)"), range,
-            new Point(0, 0), new Point(2, 0), new Point(3, 0));
-        MainTest(new MathFunction("(x^2 - 7x + 6) / (x^3 + 8)"), range, new Point(-2, 0));
+        MathFunction.TryCreate("1 / (x^2 -4)", out var func1);
+        MainTest(func1, range, new Point(-2, 0), new Point(2, 0));
+        MathFunction.TryCreate("1/ (x^3 - 5x^2 + 6x)", out var func2);
+        MainTest(func2, range, new Point(0, 0), new Point(2, 0), new Point(3, 0));
+        MathFunction.TryCreate("(x^2 - 7x + 6) / (x^3 + 8)", out var func3);
+        MainTest(func3, range, new Point(-2, 0));
     }
 }
