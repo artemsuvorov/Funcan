@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Funcan.Domain;
 using Funcan.Domain.Models;
 using Funcan.Domain.Parsers;
 using Funcan.Domain.Plotters;
@@ -46,7 +47,8 @@ public class FunctionController : Controller
         var necessaryPlotters = plotterInfos.Select(option => option.Name).ToHashSet();
         try
         {
-            var function = functionParser.Parse(inputFunction);
+            var function = new MathFunction(inputFunction);
+            // var function = functionParser.Parse(inputFunction);
             var plots = plotters
                 .Where(plotter => necessaryPlotters.Contains(plotter.PlotterInfo.Name))
                 .Select(plotter =>
