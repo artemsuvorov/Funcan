@@ -4,7 +4,7 @@ using Funcan.Domain.Models;
 
 namespace Funcan.Domain.Repository;
 
-public class SimpleHistory : IHistory
+public class MemoryHistoryRepository : IHistoryRepository
 {
     private Dictionary<int, Dictionary<string, HistoryEntry>> HistoryEntries { get; } = new();
 

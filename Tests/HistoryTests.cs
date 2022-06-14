@@ -11,7 +11,7 @@ public class HistoryTests
     public void Test()
     {
         var userId = 1;
-        var history = new SimpleHistory();
+        var history = new MemoryHistoryRepository();
         var function = "x^2";
         var analysisOptions = new List<PlotterInfo>
         {

@@ -11,12 +11,12 @@ namespace Funcan.Controllers
     public class HistoryController : Controller
     {
         private readonly ISessionManager sessionManager;
-        private readonly IHistory history;
+        private readonly IHistoryRepository historyRepository;
 
-        public HistoryController(ISessionManager sessionManager, IHistory history)
+        public HistoryController(ISessionManager sessionManager, IHistoryRepository historyRepository)
         {
             this.sessionManager = sessionManager;
-            this.history = history;
+            this.historyRepository = historyRepository;
         }
 
         [HttpPut]
@@ -32,7 +32,7 @@ namespace Funcan.Controllers
                 return BadRequest();
 
             var id = sessionManager.GetSessionId(HttpContext);
-            history.Save(id, new HistoryEntry(inputFunction, from, to, analysisOptions.ToList()));
+            historyRepository.Save(id, new HistoryEntry(inputFunction, from, to, analysisOptions.ToList()));
 
             return Ok();
         }
@@ -47,7 +47,7 @@ namespace Funcan.Controllers
                 return BadRequest();
 
             var id = sessionManager.GetSessionId(HttpContext);
-            return history.Get(id);
+            return historyRepository.Get(id);
         }
     }
 }

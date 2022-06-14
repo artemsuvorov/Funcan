@@ -1,4 +1,5 @@
 ﻿using Funcan.Domain;
+using Funcan.Domain.Models;
 using NUnit.Framework;
 
 namespace Tests;

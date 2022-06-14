@@ -9,11 +9,12 @@ namespace Tests;
 public class DiscontinuitiesTests
 {
     private DiscontinuitiesPlotter plotter = new();
-    public void MainTest(MathFunction function, FunctionRange range, params Point[] expectedPoints)
+
+    private void MainTest(MathFunction function, FunctionRange range, params Point[] expectedPoints)
     {
-        var collction = plotter.GetPointSets(function, range);
-        Assert.AreEqual(1, collction.Count());
-        var actualPoints = collction.First().Points.OrderBy(point => point.X);
+        var collection = plotter.GetPointSets(function, range).ToList();
+        Assert.AreEqual(1, collection.Count);
+        var actualPoints = collection.First().Points.OrderBy(point => point.X);
         foreach (var pair in expectedPoints.Zip(actualPoints))
         {
             var expected = pair.First;
@@ -22,7 +23,7 @@ public class DiscontinuitiesTests
             Assert.AreEqual(expected.Y, actual.Y, 0.1);
         }
     }
-    
+
     [Test]
     public void SimpleFunctionTest()
     {
@@ -35,7 +36,7 @@ public class DiscontinuitiesTests
     {
         var range = new FunctionRange(-10, 10);
         MainTest(new MathFunction("1 / (x^2 -4)"), range, new Point(-2, 0), new Point(2, 0));
-        MainTest(new MathFunction("1/ (x^3 - 5x^2 + 6x)"), range, 
+        MainTest(new MathFunction("1/ (x^3 - 5x^2 + 6x)"), range,
             new Point(0, 0), new Point(2, 0), new Point(3, 0));
         MainTest(new MathFunction("(x^2 - 7x + 6) / (x^3 + 8)"), range, new Point(-2, 0));
     }

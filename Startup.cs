@@ -20,7 +20,6 @@ namespace Funcan
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            //Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<string, JObject>>()
             services.AddControllersWithViews();
             services.AddSingleton<IFunctionParser, FunctionParser>();
             services.AddSingleton<DiscontinuitiesPlotter>();
@@ -31,7 +30,7 @@ namespace Funcan
             services.AddSingleton<IPlotter, ExtremaPlotter>();
             services.AddSingleton<IPlotter, AsymptotePlotter>();
             services.AddSingleton<ISessionManager, CookieSessionManager>();
-            services.AddSingleton<IHistory, SimpleHistory>();
+            services.AddSingleton<IHistoryRepository, MemoryHistoryRepository>();
             services.AddSwaggerGen(c => c.SwaggerDoc("v1", new OpenApiInfo { Title = "Funcan", Version = "v1" }));
         }
 

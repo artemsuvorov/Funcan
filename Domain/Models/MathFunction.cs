@@ -1,15 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using AngouriMath;
-using AngouriMath;
 using AngouriMath.Core.Exceptions;
 using AngouriMath.Extensions;
-using Funcan.Controllers;
-using Funcan.Domain.Models;
 
-namespace Funcan.Domain;
+namespace Funcan.Domain.Models;
 
 public class MathFunction
 {
