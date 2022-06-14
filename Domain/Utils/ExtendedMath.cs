@@ -11,32 +11,6 @@ namespace Funcan.Domain;
 
 public static class ExtendedMath
 {
-    public static double GetLeftLimit(Func<double, double> f, double x)
-    {
-        return f(x - double.Epsilon);
-    }
-
-    public static double GetRightLimit(Func<double, double> f, double x)
-    {
-        return f(x + double.Epsilon);
-    }
-
-    public static double GetLimit(Func<double, double> f, double x)
-    {
-        var right = GetRightLimit(f, x);
-        var left = GetLeftLimit(f, x);
-        if (right is double.NaN || left is double.NaN) return double.NaN;
-        if (double.IsInfinity(right) && double.IsInfinity(left)) return double.PositiveInfinity;
-        return Math.Abs(right - left) < double.Epsilon ? right : double.NaN;
-    }
-
-    public static double GetDerivative(Func<double, double> f, double x)
-    {
-        Func<double, double> newF = xCoordinate => (f(xCoordinate + 0.00001) - f(xCoordinate)) / (0.00001f);
-        var limit = GetLimit(newF, x);
-        return double.IsInfinity(limit) ? double.NaN : limit;
-    }
-
     public static MathFunction GetDerivative(MathFunction function)
     {
         return new MathFunction(function.Function.Differentiate("x").Stringize());
@@ -57,6 +31,13 @@ public static class ExtendedMath
             (typeof (double), "x")
         });
         var set = ($"{function.Function} = 0 and x in RR".Solve("x").Evaled.DirectChildren);
+        FindSolutionsInCollections(set, zeros, range, compiledFunc);
+        return zeros;
+    }
+
+    public static void FindSolutionsInCollections(
+        IEnumerable<Entity> set, PointSet zeros, FunctionRange range, Func<double, double> func)
+    {
         foreach (var entity in set)
         {
             var solution = entity;
@@ -66,30 +47,56 @@ public static class ExtendedMath
                 if (solution is Entity.Number.Real number)
                 {
                     var xParam = (double) number.EDecimal;
-                    if (xParam > range.From && xParam < range.To && compiledFunc(xParam) < 0.01)
-                    {
-                        var point = new Point(xParam, 0);
-                        zeros.Add(point);
-                    }
+                    AddIfSolution(xParam, func, zeros, range);
                 }
             }
             else
             {
-                var compiledSolution = solution.Compile<Func<double, double>>(new CompilationProtocol(), typeof(double), new (Type, Entity.Variable)[1]
-                {
-                    (typeof (double), param)
-                });;
+                var compiledSolution = solution.Compile<Func<double, double>>(
+                    new CompilationProtocol(), typeof(double), new (Type, Entity.Variable)[1]
+                    {
+                        (typeof (double), param)
+                    });;
                 for (var i = range.From; i < range.To; i++)
                 {
                     var xParam = compiledSolution(i);
-                    if (xParam > range.From && xParam < range.To && compiledFunc(xParam) < 0.01)
-                    {
-                        var point = new Point(xParam, 0);
-                        zeros.Add(point);
-                    }
+                    AddIfSolution(xParam, func, zeros, range);
                 }
             }
         }
-        return zeros;
+    }
+
+    public static void AddIfSolution(double x, Func<double, double> func, PointSet points, FunctionRange range)
+    {
+        var delta = 0.01;
+        if (x > range.From && x < range.To && func(x) < delta)
+        {
+            var point = new Point(x, 0);
+            points.Add(point);
+        }
+    }
+
+    public static PointSet GetCriticalPoints(MathFunction function, FunctionRange functionRange, MathFunction derivative)
+    {
+        var compiledFunc = function.Function.Compile<Func<double, double>>(
+            new CompilationProtocol(), typeof(double), new (Type, Entity.Variable)[1]
+        {
+            (typeof (double), "x")
+        });
+        var compiledDerivative = derivative.Function.Compile<Func<double, double>>(
+            new CompilationProtocol(), typeof(double), new (Type, Entity.Variable)[1]
+        {
+            (typeof (double), "x")
+        });
+        var zeros = GetZerosFunctionInRange(new MathFunction(derivative.Function.Stringize()), functionRange);
+        var delta = 0.01;
+        var criticalPoints = new PointSet();
+        foreach (var point in zeros.Points)
+        {
+            var n1 = compiledDerivative(point.X - delta);
+            var n2 = compiledDerivative(point.X + delta);
+            if (n1 * n2 < 0) criticalPoints.Add(point with {Y = compiledFunc(point.X)});
+        }
+        return criticalPoints;
     }
 }

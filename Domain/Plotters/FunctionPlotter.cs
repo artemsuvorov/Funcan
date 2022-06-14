@@ -20,7 +20,7 @@ public class FunctionPlotter : IPlotter
     public IEnumerable<PointSet> GetPointSets(MathFunction function, FunctionRange functionRange)
     {
         IEnumerable<Point> discontinuities = DiscontinuitiesPlotter
-            .GetPointSets(function, functionRange).First().Points.ToList();
+            .GetPointSets(function, functionRange).First().Points.OrderBy(point => point.X);
 
         var points = new PointSet();
         var compiledFunc = function.Function.Compile<Func<double, double>>(new CompilationProtocol(), typeof(double), new (Type, Entity.Variable)[1]
@@ -32,7 +32,7 @@ public class FunctionPlotter : IPlotter
         {
             var y = compiledFunc(x);
             var point = new Point(x, y);
-            if (discontinuities.Any() && discontinuities.First().X < point.X)//(discontinuities.Contains(point))
+            if (discontinuities.Any() && discontinuities.First().X < point.X)
             {
                 yield return points;
                 discontinuities = discontinuities.Skip(1);
