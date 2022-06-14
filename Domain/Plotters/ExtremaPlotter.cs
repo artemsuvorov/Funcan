@@ -22,7 +22,7 @@ public class ExtremaPlotter : IPlotter
             (typeof (double), "x")
         });
         var zeros = ExtendedMath.GetZerosFunctionInRange(new MathFunction(derivative.Stringize()), functionRange);
-        var delta = 0.1;
+        var delta = 0.01;
         var extremas = new PointSet();
         foreach (var point in zeros.Points)
         {

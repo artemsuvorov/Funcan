@@ -16,19 +16,19 @@ public class InflectionPointsPlotter : IPlotter
         {
             (typeof (double), "x")
         });
-        var derivative = function.Function.Differentiate("x");
+        var derivative = function.Function.Differentiate("x").Differentiate("x");
         var compiledDerivative = derivative.Compile<Func<double, double>>(new CompilationProtocol(), typeof(double), new (Type, Entity.Variable)[1]
         {
             (typeof (double), "x")
         });
         var zeros = ExtendedMath.GetZerosFunctionInRange(new MathFunction(derivative.Stringize()), functionRange);
-        var delta = 0.001;
+        var delta = 0.1;
         var extremas = new PointSet();
         foreach (var point in zeros.Points)
         {
             var n1 = compiledDerivative(point.X - delta);
             var n2 = compiledDerivative(point.X + delta);
-            if (n1 * n2 > 0) extremas.Add(point with {Y = compiledFunc(point.X)});
+            if (n1 * n2 < 0) extremas.Add(point with {Y = compiledFunc(point.X)});
         }
         yield return extremas;
     }
