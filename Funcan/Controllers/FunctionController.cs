@@ -1,11 +1,6 @@
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using Funcan.Domain;
 using Funcan.Domain.Models;
-using Funcan.Domain.Plotters;
-using Funcan.Domain.Utils;
-using Microsoft.AspNetCore.Http;
+using Funcan.Service;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Funcan.Controllers;
@@ -14,11 +9,10 @@ namespace Funcan.Controllers;
 [Route("[controller]")]
 public class FunctionController : Controller
 {
-    private readonly IEnumerable<IPlotter> plotters;
+    private IPlotterService PlotterService { get; }
 
-    public FunctionController(IEnumerable<IPlotter> plotters) =>
-        this.plotters = plotters;
-
+    public FunctionController(IPlotterService plotterService) =>
+        PlotterService = plotterService;
 
     [HttpPost]
     [Route("")]
@@ -31,30 +25,17 @@ public class FunctionController : Controller
         [FromQuery(Name = "to")] double to = 10
     )
     {
-        var plotterInfos = analysisOptions.ToList();
-        var necessaryPlotters = plotterInfos.Select(option => option.Name).ToHashSet();
-        try
+        // TODO: validate function
+        var function = new MathFunction(inputFunction);
+        if (true)
         {
-            var function = new MathFunction(inputFunction);
-            var plots = plotters
-                .Where(plotter => necessaryPlotters.Contains(plotter.PlotterInfo.Name))
-                .Select(plotter =>
-                    PointsetWrapper.Wrap(
-                        plotter.GetPointSets(function, new FunctionRange(from, to)),
-                        plotter.PlotterInfo
-                    ))
-                .ToList();
+            var plots = PlotterService.GetPlots(function, new FunctionRange(from, to), analysisOptions);
             return plots;
-        }
-        catch (ArgumentException e)
-        {
-            return BadRequest(e);
         }
     }
 
     [HttpGet]
     [Route("Plotters")]
     [ProducesResponseType(200, Type = typeof(List<PlotterInfo>))]
-    public ActionResult<List<PlotterInfo>> GetAnalysisOptions() =>
-        plotters.Select(plotter => plotter.PlotterInfo).ToList();
+    public ActionResult<List<PlotterInfo>> GetAnalysisOptions() => PlotterService.GetPlotterInfos();
 }
