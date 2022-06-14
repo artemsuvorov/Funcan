@@ -2,7 +2,7 @@ using Funcan.Controllers.Session;
 using Funcan.Domain.Parsers;
 using Funcan.Domain.Plotters;
 using Funcan.Domain.Repository;
-using Funcan.Service;
+using Funcan.Domain.Service;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;

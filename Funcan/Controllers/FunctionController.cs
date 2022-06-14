@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Funcan.Domain.Models;
 using Funcan.Domain.Repository;
-using Funcan.Service;
+using Funcan.Domain.Service;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Funcan.Controllers;
@@ -26,7 +26,7 @@ public class FunctionController : Controller
     [ProducesResponseType(400, Type = typeof(string))]
     public ActionResult<List<Plot>> GetFunction(
         [FromQuery(Name = "input")] string inputFunction,
-        [FromBody] IEnumerable<PlotterInfo> analysisOptions,
+        [FromBody] IEnumerable<string> necessaryPlotters,
         [FromQuery(Name = "from")] double from = -10,
         [FromQuery(Name = "to")] double to = 10
     )
@@ -35,13 +35,13 @@ public class FunctionController : Controller
         var function = new MathFunction(inputFunction);
         if (true)
         {
-            var plotterInfos = analysisOptions.ToList();
-            var plots = PlotterService.GetPlots(function, new FunctionRange(from, to), plotterInfos);
+            var plotters = necessaryPlotters.ToList();
+            var plots = PlotterService.GetPlots(function, new FunctionRange(from, to), plotters);
             var userId = HttpContext.Request.Cookies["user_id"];
             if (userId is not null && int.TryParse(userId, out var id))
             {
                 HistoryRepository
-                    .Save(id, new HistoryEntry(inputFunction, from, to, plotterInfos.ToList()));
+                    .Save(id, new HistoryEntry(inputFunction, from, to, plotters));
             }
 
             return plots;

@@ -4,17 +4,16 @@ using Funcan.Domain.Models;
 using Funcan.Domain.Plotters;
 using Funcan.Domain.Utils;
 
-namespace Funcan.Service;
+namespace Funcan.Domain.Service;
 
 public class PlotterService : IPlotterService
 {
     private IEnumerable<IPlotter> Plotters { get; }
     public PlotterService(IEnumerable<IPlotter> plotters) => Plotters = plotters;
 
-    public List<Plot> GetPlots(MathFunction function, FunctionRange range, IEnumerable<PlotterInfo> analysisOptions)
+    public List<Plot> GetPlots(MathFunction function, FunctionRange range, IEnumerable<string> plotters)
     {
-        var plotterInfos = analysisOptions.ToList();
-        var necessaryPlotters = plotterInfos.Select(option => option.Name).ToHashSet();
+        var necessaryPlotters = plotters.ToHashSet();
 
         return Plotters
             .Where(plotter => necessaryPlotters.Contains(plotter.PlotterInfo.Name))
