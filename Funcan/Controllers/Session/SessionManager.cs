@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using Microsoft.AspNetCore.Http;
 
 namespace Funcan.Controllers.Session;
@@ -13,7 +14,8 @@ public class CookieSessionManager : ISessionManager
         {
             Expires = DateTimeOffset.Now.AddHours(1)
         };
-        var userId = sessionId++;
+
+        var userId = GetNextValue();
         httpContext.Response.Cookies.Append("user_id", userId.ToString(), options);
     }
 
@@ -25,6 +27,11 @@ public class CookieSessionManager : ISessionManager
     public int GetSessionId(HttpContext httpContext)
     {
         var userId = httpContext.Request.Cookies["user_id"];
-        return int.Parse(userId ?? throw new InvalidOperationException());
+        if (userId is not null && int.TryParse(userId, out var id))
+            return id;
+
+        throw new ArgumentException();
     }
+
+    private int GetNextValue() => Interlocked.Increment(ref sessionId);
 }
