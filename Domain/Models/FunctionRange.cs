@@ -1,3 +1,3 @@
 namespace Funcan.Domain.Models;
 
-public record FunctionRange(double From, double To);
+    public record FunctionRange(double From, double To);
