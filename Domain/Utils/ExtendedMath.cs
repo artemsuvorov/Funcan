@@ -30,12 +30,15 @@ public static class ExtendedMath
     public static double GetLimit(MathFunction function, double point, ApproachFrom from = ApproachFrom.BothSides)
     {
         Entity entityPoint = double.IsNegativeInfinity(point) ? "-oo" :
-            double.IsPositiveInfinity(point) ? "+oo" : point.ToString(CultureInfo.InvariantCulture);
+            double.IsPositiveInfinity(point) ? "+oo" : point;
         var limit = function.Function.Limit("x", entityPoint, from);
-        // if (limit is Entity.Divf) limit = "+oo";
-        if (limit.IsFinite)
+        if (limit is Entity.Limitf) throw new ArgumentException("Слишком сложно(");
+        if (limit.Stringize() == "NaN") throw new ArgumentException("Слишком сложно(");
+        if (limit is Entity.Divf) limit = "+oo";
+        if (limit.Evaled.Stringize().Length > 10) limit = "+oo";
+        if (limit.Evaled.IsFinite)
         {
-            return double.Parse(limit.Stringize());
+            return double.Parse(limit.Evaled.Stringize());
         }
 
         return limit.Stringize() == "+oo" ? double.PositiveInfinity : double.NegativeInfinity;
@@ -57,7 +60,7 @@ public static class ExtendedMath
             if (param is null)
             {
                 if (solution is not Entity.Number.Real number) continue;
-                var xParam = (double)number.EDecimal;
+                var xParam = (double) number.EDecimal;
                 if (!(xParam > range.From) || !(xParam < range.To) || !(compiledFunc(xParam) < 0.01)) continue;
                 var point = new Point(xParam, 0);
                 zeros.Add(point);

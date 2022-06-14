@@ -19,7 +19,7 @@ public class ValidateMathFunctionTests
     public void SuccessReplaceTest()
     {
         var func = new MathFunction("tan(x)");
-        Assert.AreEqual(func.Function.Stringize(), "sin(x) / cos(x)");
+        Assert.AreEqual("sin(x) / cos(x)", func.Function.Stringize());
 
     }
 
