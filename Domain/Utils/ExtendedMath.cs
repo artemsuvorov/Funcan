@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Globalization;
+using System.Collections.Generic;
 using System.Linq;
 using AngouriMath;
 using AngouriMath.Core;
@@ -52,36 +52,76 @@ public static class ExtendedMath
             {
                 (typeof(double), "x")
             });
-        var set = $"{function.Function} = 0 and x in RR".Solve("x").Evaled.DirectChildren;
+        var set = ($"{function.Function} = 0 and x in RR".Solve("x").Evaled.DirectChildren);
+        FindSolutionsInCollections(set, zeros, range, compiledFunc);
+        return zeros;
+    }
+
+    public static void FindSolutionsInCollections(
+        IEnumerable<Entity> set, PointSet zeros, FunctionRange range, Func<double, double> func)
+    {
         foreach (var entity in set)
         {
             var solution = entity;
             var param = solution.Vars.FirstOrDefault();
             if (param is null)
             {
-                if (solution is not Entity.Number.Real number) continue;
-                var xParam = (double) number.EDecimal;
-                if (!(xParam > range.From) || !(xParam < range.To) || !(compiledFunc(xParam) < 0.01)) continue;
-                var point = new Point(xParam, 0);
-                zeros.Add(point);
+                if (solution is Entity.Number.Real number)
+                {
+                    var xParam = (double)number.EDecimal;
+                    AddIfSolution(xParam, func, zeros, range);
+                }
             }
             else
             {
-                var compiledSolution = solution.Compile<Func<double, double>>(new CompilationProtocol(), typeof(double),
-                    new (Type, Entity.Variable)[1]
+                var compiledSolution = solution.Compile<Func<double, double>>(
+                    new CompilationProtocol(), typeof(double), new (Type, Entity.Variable)[1]
                     {
                         (typeof(double), param)
                     });
+                ;
                 for (var i = range.From; i < range.To; i++)
                 {
                     var xParam = compiledSolution(i);
-                    if (!(xParam > range.From) || !(xParam < range.To) || !(compiledFunc(xParam) < 0.01)) continue;
-                    var point = new Point(xParam, 0);
-                    zeros.Add(point);
+                    AddIfSolution(xParam, func, zeros, range);
                 }
             }
         }
+    }
 
-        return zeros;
+    public static void AddIfSolution(double x, Func<double, double> func, PointSet points, FunctionRange range)
+    {
+        var delta = 0.01;
+        if (x > range.From && x < range.To && func(x) < delta)
+        {
+            var point = new Point(x, 0);
+            points.Add(point);
+        }
+    }
+
+    public static PointSet GetCriticalPoints(MathFunction function, FunctionRange functionRange,
+        MathFunction derivative)
+    {
+        var compiledFunc = function.Function.Compile<Func<double, double>>(
+            new CompilationProtocol(), typeof(double), new (Type, Entity.Variable)[1]
+            {
+                (typeof(double), "x")
+            });
+        var compiledDerivative = derivative.Function.Compile<Func<double, double>>(
+            new CompilationProtocol(), typeof(double), new (Type, Entity.Variable)[1]
+            {
+                (typeof(double), "x")
+            });
+        var zeros = GetZerosFunctionInRange(new MathFunction(derivative.Function.Stringize()), functionRange);
+        var delta = 0.01;
+        var criticalPoints = new PointSet();
+        foreach (var point in zeros.Points)
+        {
+            var n1 = compiledDerivative(point.X - delta);
+            var n2 = compiledDerivative(point.X + delta);
+            if (n1 * n2 < 0) criticalPoints.Add(point with { Y = compiledFunc(point.X) });
+        }
+
+        return criticalPoints;
     }
 }

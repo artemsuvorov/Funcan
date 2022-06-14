@@ -33,15 +33,16 @@ public class ExtremaTests
         var set = pointSets.First();
         Assert.AreEqual(count, set.Points.Count);
         var tuples = points.Zip(set.Points);
+        var delta = 0.1;
         foreach (var tuple in tuples)
         {
-            Assert.AreEqual(tuple.First.X, tuple.Second.X, 0.1);
-            Assert.AreEqual(tuple.First.Y, tuple.Second.Y, 0.1);
+            Assert.AreEqual(tuple.First.X, tuple.Second.X, delta);
+            Assert.AreEqual(tuple.First.Y, tuple.Second.Y, delta);
         }
     }
 
     [Test]
-    public void TestSimplePolynomial()
+    public void TestPolynomial()
     {
         Polynomial("x^2 - 5x + 4", 1, new Point(2.5, -2.25));
         Polynomial("x^3 + x^2", 2, new Point(-0.667, 0.148), new Point(0, 0));

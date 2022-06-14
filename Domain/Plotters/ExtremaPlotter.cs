@@ -13,27 +13,8 @@ public class ExtremaPlotter : IPlotter
 
     public IEnumerable<PointSet> GetPointSets(MathFunction function, FunctionRange functionRange)
     {
-        var compiledFunc = function.Function.Compile<Func<double, double>>(new CompilationProtocol(), typeof(double),
-            new (Type, Entity.Variable)[1]
-            {
-                (typeof(double), "x")
-            });
         var derivative = function.Function.Differentiate("x");
-        var compiledDerivative = derivative.Compile<Func<double, double>>(new CompilationProtocol(), typeof(double),
-            new (Type, Entity.Variable)[1]
-            {
-                (typeof(double), "x")
-            });
-        var zeros = ExtendedMath.GetZerosFunctionInRange(new MathFunction(derivative.Stringize()), functionRange);
-        var delta = 0.01;
-        var extremas = new PointSet();
-        foreach (var point in zeros.Points)
-        {
-            var n1 = compiledDerivative(point.X - delta);
-            var n2 = compiledDerivative(point.X + delta);
-            if (n1 * n2 < 0) extremas.Add(point with { Y = compiledFunc(point.X) });
-        }
-
-        yield return extremas;
+        yield return ExtendedMath
+            .GetCriticalPoints(function, functionRange, new MathFunction(derivative.Stringize()));
     }
 }
