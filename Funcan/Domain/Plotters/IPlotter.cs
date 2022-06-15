@@ -3,8 +3,8 @@ using Funcan.Domain.Models;
 
 namespace Funcan.Domain.Plotters;
 
-public interface IPlotter {
+public interface IPlotter
+{
     PlotterInfo PlotterInfo { get; }
     IEnumerable<PointSet> GetPointSets(MathFunction function, FunctionRange functionRange);
 }
-

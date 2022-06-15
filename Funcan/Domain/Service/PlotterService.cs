@@ -6,11 +6,13 @@ using Funcan.Domain.Utils;
 
 namespace Funcan.Domain.Service;
 
-public class PlotterService : IPlotterService {
+public class PlotterService : IPlotterService
+{
     private IEnumerable<IPlotter> Plotters { get; }
     public PlotterService(IEnumerable<IPlotter> plotters) => Plotters = plotters;
 
-    public List<Plot> GetPlots(MathFunction function, FunctionRange range, IEnumerable<string> plotters){
+    public List<Plot> GetPlots(MathFunction function, FunctionRange range, IEnumerable<string> plotters)
+    {
         var necessaryPlotters = plotters.ToHashSet();
 
         return Plotters

@@ -8,7 +8,8 @@ using PointSet = Funcan.Domain.Models.PointSet;
 
 namespace Funcan.Domain.Plotters;
 
-public class FunctionPlotter : IPlotter {
+public class FunctionPlotter : IPlotter
+{
     private DiscontinuitiesPlotter DiscontinuitiesPlotter { get; }
 
     public FunctionPlotter(DiscontinuitiesPlotter discontinuitiesPlotter) =>
@@ -16,26 +17,31 @@ public class FunctionPlotter : IPlotter {
 
     public PlotterInfo PlotterInfo => new("function", DrawType.Line);
 
-    public IEnumerable<PointSet> GetPointSets(MathFunction function, FunctionRange functionRange){
+    public IEnumerable<PointSet> GetPointSets(MathFunction function, FunctionRange functionRange)
+    {
         IEnumerable<Point> discontinuities = DiscontinuitiesPlotter
             .GetPointSets(function, functionRange).First().Points.OrderBy(point => point.X);
 
         var points = new PointSet();
         var compiledFunc = function.Entity.Compile<Func<double, double>>(new CompilationProtocol(), typeof(double),
-            new (Type, Entity.Variable)[1] {
+            new (Type, Entity.Variable)[1]
+            {
                 (typeof(double), "x")
             });
 
-        for (var x = functionRange.From; x <= functionRange.To; x += Settings.Step){
+        for (var x = functionRange.From; x <= functionRange.To; x += Settings.Step)
+        {
             var y = compiledFunc(x);
             var point = new Point(x, y);
-            if (discontinuities.Any() && discontinuities.First().X < point.X){
+            if (discontinuities.Any() && discontinuities.First().X < point.X)
+            {
                 yield return points;
                 discontinuities = discontinuities.Skip(1);
                 points = new PointSet();
                 points.Add(point);
             }
-            else{
+            else
+            {
                 points.Add(new Point(x, y));
             }
         }

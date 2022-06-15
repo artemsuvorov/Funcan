@@ -1,8 +1,10 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 
-namespace Funcan {
-    public class Program {
+namespace Funcan
+{
+    public class Program
+    {
         public static void Main(string[] args) => CreateHostBuilder(args).Build().Run();
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>

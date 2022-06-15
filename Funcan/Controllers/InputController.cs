@@ -7,15 +7,18 @@ namespace Funcan.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public class InputController : Controller {
+public class InputController : Controller
+{
     private readonly ISessionManager sessionManager;
 
-    public InputController(ISessionManager sessionManager){
+    public InputController(ISessionManager sessionManager)
+    {
         this.sessionManager = sessionManager;
     }
 
     [HttpGet]
-    public IActionResult Index(){
+    public IActionResult Index()
+    {
         if (!sessionManager.ContainsSessionId(HttpContext))
             sessionManager.StartSession(HttpContext);
         return View();

@@ -10,11 +10,13 @@ namespace Funcan.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public class FunctionController : Controller {
+public class FunctionController : Controller
+{
     private IPlotterService PlotterService { get; }
     private IHistoryRepository HistoryRepository { get; }
 
-    public FunctionController(IPlotterService plotterService, IHistoryRepository historyRepository){
+    public FunctionController(IPlotterService plotterService, IHistoryRepository historyRepository)
+    {
         PlotterService = plotterService;
         HistoryRepository = historyRepository;
     }
@@ -23,12 +25,13 @@ public class FunctionController : Controller {
     [Route("")]
     [ProducesResponseType(200, Type = typeof(List<Plot>))]
     [ProducesResponseType(400, Type = typeof(string))]
-    public ActionResult<List<Plot>> GetFunction(
+    public ActionResult<List<Plot>> GetPlots(
         [FromQuery(Name = "input")] string inputFunction,
         [FromBody] IEnumerable<string> necessaryPlotters,
         [FromQuery(Name = "from")] double from = -10,
         [FromQuery(Name = "to")] double to = 10
-    ){
+    )
+    {
         if (!MathFunction.TryCreate(inputFunction, out var function))
             return BadRequest("Incorrect input");
         var plotters = necessaryPlotters.ToList();
@@ -47,7 +50,8 @@ public class FunctionController : Controller {
     [HttpGet]
     [Route("History")]
     [ProducesResponseType(200, Type = typeof(List<HistoryEntry>))]
-    public ActionResult<List<HistoryEntry>> GetHistory(){
+    public ActionResult<List<HistoryEntry>> GetHistory()
+    {
         var userId = HttpContext.Request.Cookies["user_id"];
         if (userId is not null && int.TryParse(userId, out var id))
             return HistoryRepository.Get(id);
