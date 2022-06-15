@@ -4,20 +4,16 @@ using NUnit.Framework;
 
 namespace Tests;
 
-class FunctionHandler
-{
-    public static void CheckValidAsymptote(Func<Point, bool> checker, string function, FunctionRange range)
-    {
+public static class FunctionHandler {
+    public static void CheckValidAsymptote(Func<Point, bool> checker, string function, FunctionRange range){
         MathFunction.TryCreate(function, out var func);
         var discontinuitiesPlotter = new DiscontinuitiesPlotter();
         var asymptotePlotter = new AsymptotePlotter(
             new FunctionPlotter(discontinuitiesPlotter), discontinuitiesPlotter
         );
         var allAsymptotePoints = asymptotePlotter.GetPointSets(func, range);
-        foreach (var pointSet in allAsymptotePoints)
-        {
-            foreach (var point in pointSet.Points)
-            {
+        foreach (var pointSet in allAsymptotePoints){
+            foreach (var point in pointSet.Points){
                 Assert.True(checker(point));
             }
         }
@@ -25,11 +21,9 @@ class FunctionHandler
 }
 
 [TestFixture]
-public class AsymptoteTests
-{
+public class AsymptoteTests {
     [Test]
-    public void AsymptoteTestEasy1()
-    {
+    public void AsymptoteTestEasy1(){
         var function = "1/x";
         double ObliqueAsymptote(double _) => 0;
         var horizontalAsymptote = 0;
@@ -41,8 +35,7 @@ public class AsymptoteTests
     }
 
     [Test]
-    public void AsymptoteTestEasy2()
-    {
+    public void AsymptoteTestEasy2(){
         var function = "1/(x^2)";
         double ObliqueAsymptote(double _) => 0;
         var horizontalAsymptote = 0;

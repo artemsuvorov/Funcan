@@ -3,8 +3,7 @@ using Funcan.Domain.Models;
 
 namespace Funcan.Domain.Service;
 
-public interface IPlotterService
-{
+public interface IPlotterService {
     List<Plot> GetPlots(MathFunction function, FunctionRange range, IEnumerable<string> plotters);
 
     List<PlotterInfo> GetPlotterInfos();

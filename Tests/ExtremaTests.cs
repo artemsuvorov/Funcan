@@ -5,14 +5,11 @@ using NUnit.Framework;
 namespace Tests;
 
 [TestFixture]
-public class ExtremaTests
-{
+public class ExtremaTests {
     private readonly ExtremaPlotter extremaPlotter = new();
 
     [Test]
-    public void TestSqr()
-    {
-        
+    public void TestSqr(){
         MathFunction.TryCreate("x^2", out var mathFunction);
         var range = new FunctionRange(-5, 5);
         var collection = extremaPlotter.GetPointSets(mathFunction, range);
@@ -23,8 +20,7 @@ public class ExtremaTests
         Assert.Contains(new Point(0, 0), set.Points.ToList());
     }
 
-    private void Polynomial(string expression, int count, params Point[] points)
-    {
+    private void Polynomial(string expression, int count, params Point[] points){
         MathFunction.TryCreate(expression, out var mathFunction);
         var range = new FunctionRange(-5, 5);
         var collection = extremaPlotter.GetPointSets(mathFunction, range);
@@ -34,22 +30,19 @@ public class ExtremaTests
         Assert.AreEqual(count, set.Points.Count);
         var tuples = points.Zip(set.Points);
         var delta = 0.1;
-        foreach (var tuple in tuples)
-        {
+        foreach (var tuple in tuples){
             Assert.AreEqual(tuple.First.X, tuple.Second.X, delta);
             Assert.AreEqual(tuple.First.Y, tuple.Second.Y, delta);
         }
     }
 
     [Test]
-    public void TestPolynomial()
-    {
+    public void TestPolynomial(){
         Polynomial("x^2 - 5x + 4", 1, new Point(2.5, -2.25));
         Polynomial("x^3 + x^2", 2, new Point(-0.667, 0.148), new Point(0, 0));
     }
 
-    private void Trigonometry(string function, params Point[] points)
-    {
+    private void Trigonometry(string function, params Point[] points){
         MathFunction.TryCreate(function, out var mathFunction);
         var range = new FunctionRange(-5, 7);
         var collection = extremaPlotter.GetPointSets(mathFunction, range);
@@ -62,8 +55,7 @@ public class ExtremaTests
     }
 
     [Test]
-    public void TestTrigonometry()
-    {
+    public void TestTrigonometry(){
         var pi = Math.PI;
         Trigonometry("sin(x)", new Point(pi * -1.5, 1), new Point(pi * -0.5, -1),
             new Point(pi * 0.5, 1), new Point(pi * 1.5, -1));

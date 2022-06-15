@@ -7,15 +7,12 @@ using Funcan.Domain.Utils;
 
 namespace Funcan.Domain.Plotters;
 
-public class InflectionPointsPlotter : IPlotter
-{
+public class InflectionPointsPlotter : IPlotter {
     public PlotterInfo PlotterInfo => new PlotterInfo("inflection", DrawType.Dots);
 
-    public IEnumerable<PointSet> GetPointSets(MathFunction function, FunctionRange functionRange)
-    {
+    public IEnumerable<PointSet> GetPointSets(MathFunction function, FunctionRange functionRange){
         var secondDerivative = function.Entity.Differentiate("x").Differentiate("x");
         MathFunction.TryCreate(secondDerivative.Stringize(), out var secondDerivativeFunc);
-        yield return ExtendedMath.
-            GetCriticalPoints(function, functionRange, secondDerivativeFunc);
+        yield return ExtendedMath.GetExtremaPoints(function, functionRange, secondDerivativeFunc);
     }
 }

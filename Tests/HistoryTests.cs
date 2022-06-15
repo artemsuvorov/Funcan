@@ -5,16 +5,14 @@ using NUnit.Framework;
 namespace Tests;
 
 [TestFixture]
-public class HistoryTests
-{
+public class HistoryTests {
     [Test]
-    public void Test()
-    {
+    public void Test(){
         var userId = 1;
         var history = new MemoryHistoryRepository();
         var function = "x^2";
         var analysisOptions = new List<string> { "function", "extrema" };
-        var expected = new HistoryEntry(function, -5, 5, analysisOptions);
+        var expected = new HistoryEntry(function, -5, 5, analysisOptions, DateTime.Now);
 
         history.Save(userId, expected);
         var actual = history.Get(userId).First();
@@ -24,7 +22,7 @@ public class HistoryTests
         Assert.AreEqual(expected.plotters.Count, actual.plotters.Count);
 
         var count = expected.plotters.Count;
-        for (var i = 0; i < count; i++) 
+        for (var i = 0; i < count; i++)
             Assert.AreEqual(expected.plotters[i], actual.plotters[i]);
     }
 }

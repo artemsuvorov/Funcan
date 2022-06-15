@@ -1,21 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using AngouriMath;
-using AngouriMath.Core.Compilation.IntoLinq;
+﻿using System.Collections.Generic;
 using Funcan.Domain.Models;
 using Funcan.Domain.Utils;
 
 namespace Funcan.Domain.Plotters;
 
-public class ExtremaPlotter : IPlotter
-{
+public class ExtremaPlotter : IPlotter {
     public PlotterInfo PlotterInfo => new PlotterInfo("extrema", DrawType.Dots);
 
-    public IEnumerable<PointSet> GetPointSets(MathFunction function, FunctionRange functionRange)
-    {
+    public IEnumerable<PointSet> GetPointSets(MathFunction function, FunctionRange functionRange){
         var derivative = function.Entity.Differentiate("x");
         MathFunction.TryCreate(derivative.Stringize(), out var derivativeFunc);
-        yield return ExtendedMath
-            .GetCriticalPoints(function, functionRange, derivativeFunc);
+        yield return ExtendedMath.GetExtremaPoints(function, functionRange, derivativeFunc);
     }
 }
