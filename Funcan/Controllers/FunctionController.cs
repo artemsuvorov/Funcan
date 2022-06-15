@@ -33,27 +33,17 @@ public class FunctionController : Controller
         [FromQuery(Name = "to")] double to = 10
     )
     {
-        // TODO: validate function
-        if (MathFunction.TryCreate(inputFunction, out var function))
+        if (!MathFunction.TryCreate(inputFunction, out var function)) return BadRequest("HUY");
+        var plotters = necessaryPlotters.ToList();
+        var plots = PlotterService.GetPlots(function, new FunctionRange(from, to), plotters);
+        var userId = HttpContext.Request.Cookies["user_id"];
+        if (userId is not null && int.TryParse(userId, out var id))
         {
-            var plotters = necessaryPlotters.ToList();
-            var plots = PlotterService.GetPlots(function, new FunctionRange(from, to), plotters);
-            var userId = HttpContext.Request.Cookies["user_id"];
-            if (userId is not null && int.TryParse(userId, out var id))
-            {
-                HistoryRepository
-                    .Save(id, new HistoryEntry(inputFunction, from, to, plotters, DateTime.Now));
-            }
-
-            return plots;
+            HistoryRepository
+                .Save(id, new HistoryEntry(inputFunction, from, to, plotters, DateTime.Now));
         }
 
-        else
-        {
-            //Error
-        }
-
-        throw new AggregateException();
+        return plots;
     }
 
     [HttpGet]
