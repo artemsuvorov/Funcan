@@ -1,0 +1,47 @@
+﻿@{
+    ViewData["Title"] = "Funcan";
+}
+
+@section HeadScripts
+{
+    <script src="~/script/plotly-2.12.1.min.js"></script>
+}
+
+@section BodyScripts
+{
+    <script src="~/script/analysis-options-load.js"></script>
+    <script src="~/script/input-func-draw.js"></script>
+    <script src="~/script/hist-script.js"></script>
+}
+
+<div class="center">
+    <form method="get" asp-controller="Function" asp-action="GetPlots" class="input-form"
+          onsubmit="return submitInputFunc(event);">
+        <input id="func-input-field" type="text" name="input" placeholder="Enter a math function ..."
+               class="input-field input-elem input-elem-trebuchet" autocomplete="off" required/>
+        <input id="from-input-field" type="number" step="any" name="from" placeholder="From ..."
+               value="-10" class="input-field input-elem input-elem-trebuchet range-field" autocomplete="off" required/>
+        <input id="to-input-field" type="number" step="any" name="to" placeholder="To ..."
+               value="10" class="input-field input-elem input-elem-trebuchet range-field" autocomplete="off" required/>
+        <input id="input-submit-button" class="input-button input-elem input-elem-trebuchet" type="submit" value="&#61"/>
+    </form>
+    <div class="analysis-options-container container">
+        <label class="container-title">Analysis</label>
+        <form id="analysis-options" onsubmit="return false" method="get" target="Function">
+            @* analysis options *@
+        </form>
+    </div>
+    <div id="in-row-container">
+        <div class="history-list-container container">
+            <label class="container-title">History</label>
+            <select id="history-list" multiple ondblclick="return historyDoubleClick(event)">
+                @* history entries *@
+            </select>
+        </div>
+        <div id="container-holder">
+            <div id="error-container" class="container error-message"></div>
+            <div id="info-container" class="container info-message"></div>
+            <div id="chart-container" class="container"></div>
+        </div>
+    </div>
+</div>

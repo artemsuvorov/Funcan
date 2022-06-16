@@ -351,3 +351,4 @@ MigrationBackup/
 
 # Custom
 .idea/*
+Tests/.idea/*
